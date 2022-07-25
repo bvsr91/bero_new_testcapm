@@ -1,0 +1,46 @@
+# CAP mrobe
+_out
+*.db
+connection.properties
+default-*.json
+.cdsrc-private.json
+gen/
+node_modules/
+target/
+
+# Web IDE, App Studio
+.che/
+.gen/
+
+# MTA
+*_mta_build_tmp
+*.mtar
+mta_archives/
+
+# Other
+.DS_Store
+*.orig
+*.log
+
+*.iml
+*.flattened-pom.xml
+
+# IDEs
+# .vscode
+# .idea
+
+# auto generated wildcard
+mrobe/db/.env
+# auto generated wildcard
+mrobe/.env
+# auto generated wildcard
+Notifications/.env
+# auto generated wildcard
+mrobe/.env1
+
+.env
+.env1
+# auto generated wildcard
+mrobe/.env4
+# auto generated wildcard
+mrobe/.env5

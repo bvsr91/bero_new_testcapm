@@ -1,0 +1,37 @@
+
+### update functionality testing
+
+PUT http://localhost:4004/v2/MroSrv/VendorNotifications(guid'3c726ce1-31e1-4ea2-834b-cbc789f10557')
+Content-Type: application/json;IEEE754Compatible=true
+
+{
+    "Vendor_List_manufacturerCode":"5466",
+    "Vendor_List_localManufacturerCode":"4654",
+    "Vendor_List_countryCode":"AG",
+    "status_code":"Approved"
+}
+
+
+
+### update functionality testing
+
+POST http://localhost:4004/v2/MroSrv/PricingComments
+Content-Type: application/json;IEEE754Compatible=true
+
+{
+    "Pricing_Conditions_manufacturerCode":"12000",
+    "Pricing_Conditions_countryCode":"AE",
+    "Comment":"PRcing Rejection",
+    "pricing_Notif_uuid":"76f922cf-b595-4b6c-b6e9-dbdad806584c"
+}
+
+##actions
+
+POST http://localhost:4004/v2/MroSrv/acceptPricingCond
+Content-Type: application/json;IEEE754Compatible=true
+
+{
+    "uuid":"ec3c2cd9-ca78-44d5-a3b3-c1c26a733d31",
+    "manufacturerCode":"4612",
+    "countryCode":"AF"
+}

@@ -1,0 +1,33 @@
+{
+    "xsappname": "mrobe",
+    "tenant-mode": "dedicated",
+    "description": "Security profile of called application",
+    "scopes": [
+        {
+            "name": "$XSAPPNAME.mrobeUser_sc",
+            "description": "MRO User"
+        },
+        {
+            "name": "$XSAPPNAME.mrobeReadOnly_sc",
+            "description": "MRO Read Only"
+        }
+    ],
+    "role-templates": [
+        {
+            "name": "mrobe_user",
+            "description": "UAA",
+            "scope-references": [
+                "$XSAPPNAME.mrobeUser_sc",
+                "uaa.user"
+            ]
+        },
+        {
+            "name": "mrobe_readOnly",
+            "description": "MRO service Read only",
+            "scope-references": [
+                "$XSAPPNAME.mrobeReadOnly_sc",
+                "uaa.user"
+            ]
+        }
+    ]
+}

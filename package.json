@@ -1,0 +1,80 @@
+{
+  "name": "mrobe",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap-cloud-sdk/util": "^2.5.0",
+    "@sap/audit-logging": "^5.5.4",
+    "@sap/cds": "^5",
+    "@sap/cds-odata-v2-adapter-proxy": "^1.9.0",
+    "@sap/hana-client": "^2.13.21",
+    "@sap/xsenv": "^3.3.2",
+    "@sap/xssec": "^3.2.13",
+    "express": "^4",
+    "hdb": "^0.18.3",
+    "passport": "^0.6.0",
+    "sap-cf-axios": "^0.3.5"
+  },
+  "devDependencies": {
+    "@sap/hdi-deploy": "4.4.1",
+    "sqlite3": "^5.0.2"
+  },
+  "scripts": {
+    "start": "cds run"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "es2020": true,
+      "node": true,
+      "jest": true,
+      "mocha": true
+    },
+    "globals": {
+      "SELECT": true,
+      "INSERT": true,
+      "UPDATE": true,
+      "DELETE": true,
+      "CREATE": true,
+      "DROP": true,
+      "CDL": true,
+      "CQL": true,
+      "CXL": true,
+      "cds": true
+    },
+    "rules": {
+      "no-console": "off",
+      "require-atomic-updates": "off"
+    }
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "hana"
+      },
+      "uaa": {
+        "kind": "xsuaa"
+      },
+      "destinations": {
+        "destination": "SAP_Notifications_Launchpad"
+      }
+    },
+    "hana": {
+      "deploy-format": "hdbtable"
+    },
+    "build": {
+      "tasks": [
+        {
+          "for": "hana",
+          "dest": "../db"
+        },
+        {
+          "for": "node-cf"
+        }
+      ]
+    }
+  }
+}

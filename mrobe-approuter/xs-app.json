@@ -1,0 +1,15 @@
+{
+    "authenticationMethod": "route",
+    "routes": [
+        {
+            "source": "^/v2/MroSrv/(.*)$",
+            "destination": "srv-api",
+            "authenticationType": "xsuaa",
+            "csrfProtection": true,
+            "scope": [
+                "$XSAPPNAME.mrobeUser_sc",
+                "$XSAPPNAME.mrobeReadOnly_sc"
+            ]
+        }
+    ]
+}
