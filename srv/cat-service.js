@@ -461,12 +461,76 @@ module.exports = async function () {
 
     this.before("UPDATE", "PricingConditions", async (req, next) => {
         try {
-            if (req.data.local_ownership === true && req.data.ld_initiator === null) {
-                req.data.status_code = "Forwarded";
-                req.data.approver = "";
-            } else {
-                req.data.status_code = "Pending";
-                oResult = await SELECT.one(UserDetails).where({ userid: req.user.id.toUpperCase() });
+            if (req.data.status_code !== "Deleted") {
+                if (req.data.local_ownership === true && req.data.ld_initiator === null) {
+                    req.data.status_code = "Forwarded";
+                    req.data.approver = "";
+                } else {
+                    req.data.status_code = "Pending";
+                    oResult = await SELECT.one(UserDetails).where({ userid: req.user.id.toUpperCase() });
+                    var mailId, managerid;
+                    if (oResult) {
+                        // mailId = oResult.mail_id;
+                        var oManager = await SELECT.one(UserDetails).where({
+                            userid: oResult.managerid
+                        });
+                        if (oManager) {
+                            mailId = oManager.mail_id;
+                        } else {
+                            req.reject(400, "No manager assigned to the user");
+                        }
+                    } else {
+                        req.reject(400, "No manager assigned to the user");
+                    }
+                    req.data.approver = oManager.userid;
+                }
+            }
+        } catch (error) {
+            req.reject(error);
+        }
+    });
+
+    this.on("UPDATE", "PricingConditions", async (req, next) => {
+        var oPricingConditions = await next();
+        try {
+            if (oPricingConditions.status_code !== "Deleted") {
+                var sUser, status;
+                if (oPricingConditions.local_ownership === true && oPricingConditions.ld_initiator !== null) {
+                    sUser = oPricingConditions.ld_initiator;
+                    status = "Pending";
+                } else if (oPricingConditions.local_ownership === true && oPricingConditions.ld_initiator === null) {
+                    sUser = req.user.id;
+                    status = "Forwarded";
+                    var aUsers = await SELECT.from(UserDetails).where({ country: oPricingConditions.countryCode_code, role_role: 'LDT' });
+                    var aMails = [];
+                    if (aUsers.length > 0) {
+                        for (var a of aUsers) {
+                            aMails.push(a.mail_id);
+                        }
+                        await createNoti.mainPayload({
+                            requestType: "New",
+                            requestDetail: "Manufacturer- " + oPricingConditions.manufacturerCode + " & Country- " + oPricingConditions.countryCode_code,
+                            from_user: oPricingConditions.initiator,
+                            recipients: aMails,
+                            priority: "High"
+                        });
+                        await UPDATE(Pricing_Notifications).with({
+                            status_code: status,
+                            approver: ""
+                        }).where(
+                            {
+                                uuid: oPricingConditions.p_notif_uuid
+                            }
+                        );
+                        return oPricingConditions;
+                    } else {
+                        req.reject(400, "No Local Delivery teams available for the country: " + oPricingConditions.countryCode_code);
+                    }
+                } else {
+                    sUser = req.user.id;
+                    status = "Pending";
+                }
+                oResult = await SELECT.one(UserDetails).where({ userid: sUser.toUpperCase() });
                 var mailId, managerid;
                 if (oResult) {
                     // mailId = oResult.mail_id;
@@ -481,87 +545,35 @@ module.exports = async function () {
                 } else {
                     req.reject(400, "No manager assigned to the user");
                 }
-                req.data.approver = oManager.userid;
-            }
-        } catch (error) {
-            req.reject(error);
-        }
-    });
+                // oPricingConditions.status_code = status;
+                oPricingConditions.approver = oResult.managerid;
 
-    this.on("UPDATE", "PricingConditions", async (req, next) => {
-        var oPricingConditions = await next();
-        try {
-            var sUser, status;
-            if (oPricingConditions.local_ownership === true && oPricingConditions.ld_initiator !== null) {
-                sUser = oPricingConditions.ld_initiator;
-                status = "Pending";
-            } else if (oPricingConditions.local_ownership === true && oPricingConditions.ld_initiator === null) {
-                sUser = req.user.id;
-                status = "Forwarded";
-                var aUsers = await SELECT.from(UserDetails).where({ country: oPricingConditions.countryCode_code, role_role: 'LDT' });
-                var aMails = [];
-                if (aUsers.length > 0) {
-                    for (var a of aUsers) {
-                        aMails.push(a.mail_id);
+                await UPDATE(Pricing_Notifications).with({
+                    status_code: status,
+                    approver: oResult.managerid
+
+                }).where(
+                    {
+                        uuid: oPricingConditions.p_notif_uuid
                     }
-                    await createNoti.mainPayload({
-                        requestType: "New",
-                        requestDetail: "Manufacturer- " + oPricingConditions.manufacturerCode + " & Country- " + oPricingConditions.countryCode_code,
-                        from_user: oPricingConditions.initiator,
-                        recipients: aMails,
-                        priority: "High"
-                    });
-                    await UPDATE(Pricing_Notifications).with({
-                        status_code: status,
-                        approver: ""
-                    }).where(
-                        {
-                            uuid: oPricingConditions.p_notif_uuid
-                        }
-                    );
-                    return oPricingConditions;
-                } else {
-                    req.reject(400, "No Local Delivery teams available for the country: " + oPricingConditions.countryCode_code);
-                }
-            } else {
-                sUser = req.user.id;
-                status = "Pending";
-            }
-            oResult = await SELECT.one(UserDetails).where({ userid: sUser.toUpperCase() });
-            var mailId, managerid;
-            if (oResult) {
-                // mailId = oResult.mail_id;
-                var oManager = await SELECT.one(UserDetails).where({
-                    userid: oResult.managerid
+                );
+
+                await createNoti.mainPayload({
+                    requestType: "New",
+                    requestDetail: "Manufacturer- " + oPricingConditions.manufacturerCode + " & Country- " + oPricingConditions.countryCode_code,
+                    from_user: req.user.id.toUpperCase(),
+                    recipients: [mailId],
+                    priority: "High"
                 });
-                if (oManager) {
-                    mailId = oManager.mail_id;
-                } else {
-                    req.reject(400, "No manager assigned to the user");
-                }
             } else {
-                req.reject(400, "No manager assigned to the user");
+                await UPDATE(Pricing_Notifications).with({
+                    status_code: "Deleted"
+                }).where(
+                    {
+                        uuid: oPricingConditions.p_notif_uuid
+                    }
+                );
             }
-            // oPricingConditions.status_code = status;
-            oPricingConditions.approver = oResult.managerid;
-
-            await UPDATE(Pricing_Notifications).with({
-                status_code: status,
-                approver: oResult.managerid
-
-            }).where(
-                {
-                    uuid: oPricingConditions.p_notif_uuid
-                }
-            );
-
-            await createNoti.mainPayload({
-                requestType: "New",
-                requestDetail: "Manufacturer- " + oPricingConditions.manufacturerCode + " & Country- " + oPricingConditions.countryCode_code,
-                from_user: req.user.id.toUpperCase(),
-                recipients: [mailId],
-                priority: "High"
-            });
 
         } catch (err) {
             req.reject(400, err);

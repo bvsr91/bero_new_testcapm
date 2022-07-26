@@ -1,12 +1,4 @@
-PATCH http://localhost:4004/v2/MroSrv/PricingConditions(manufacturerCode='234234',countryCode_code='IT')
+PATCH http://localhost:4004/v2/MroSrv/PricingConditions(manufacturerCode='90002',countryCode_code='AE')
 Content-Type: application/json;IEEE754Compatible=true
 
-{"manufacturerCodeDesc":"test 234234",
-"ld_initiator":"PRIYAJANB1",
-"countryCode_code":"IT",
-"countryFactor":4,
-"exchangeRate":2,
-"validityStart":"2022-07-23T18:30:00.000Z",
-"validityEnd":null,
-"local_ownership":true,
-"localCurrency_code":null}
+{"status_code":"Deleted","p_notif_uuid":"c4d68d03-b95d-4517-858f-b4ab93e78d26"}
