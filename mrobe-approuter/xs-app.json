@@ -10,6 +10,16 @@
                 "$XSAPPNAME.mrobeUser_sc",
                 "$XSAPPNAME.mrobeReadOnly_sc"
             ]
+        },
+        {
+            "source": "^/MroReadSrv/(.*)$",
+            "destination": "srv-api",
+            "authenticationType": "xsuaa",
+            "csrfProtection": true,
+            "scope": [
+                "$XSAPPNAME.mrobeUser_sc",
+                "$XSAPPNAME.mrobeReadOnly_sc"
+            ]
         }
     ]
 }

@@ -1,4 +1,1 @@
-PATCH http://localhost:4004/v2/MroSrv/PricingConditions(manufacturerCode='90002',countryCode_code='AE')
-Content-Type: application/json;IEEE754Compatible=true
-
-{"status_code":"Deleted","p_notif_uuid":"c4d68d03-b95d-4517-858f-b4ab93e78d26"}
+GET http://localhost:4004/v2/MroSrv/countryFactor

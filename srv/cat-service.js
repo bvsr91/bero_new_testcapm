@@ -1,6 +1,7 @@
 const cds = require('@sap/cds');
 const createNoti = require('./createNotification');
 const vendorNoti = require('./createVendorNotification');
+// const types = require('./types');
 module.exports = async function () {
     const db = await cds.connect.to('db')
     const {
@@ -581,4 +582,24 @@ module.exports = async function () {
         return oPricingConditions;
     });
 
+    this.on("countryFactor", async (req, next) => {
+
+        try {
+            aData = await SELECT.from(Pricing_Conditions).columns('manufacturerCode', 'countryCode_code', 'countryFactor');
+            var aFinal = [];
+            var countryFactors = [];
+            var oCountryFactor = {};
+            if (aData.length > 0) {
+                for (var a of aData) {
+                    oCountryFactor.manufacturerCode = a.manufacturerCode;
+                    oCountryFactor.country = a.countryCode_code;
+                    oCountryFactor.factor = a.countryFactor;
+                    countryFactors.push(oCountryFactor)
+                }
+            }
+        } catch (error) {
+            req.reject(error);
+        }
+        return countryFactors;
+    });
 }
