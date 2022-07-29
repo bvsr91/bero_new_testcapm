@@ -249,7 +249,7 @@ module.exports = async function () {
                     + " & Country- " + VendorNotifications.Vendor_List_countryCode_code,
                 from_user: req.user.id.toUpperCase(),
                 recipients: [mailId],
-                priority: "High"
+                priority: "Low"
             });
 
         } catch (err) {

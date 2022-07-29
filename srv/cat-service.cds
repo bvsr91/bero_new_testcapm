@@ -107,21 +107,21 @@ service MroReadService @(path : '/MroReadSrv') {
     @readonly
     entity countryFactor       as projection on my.Pricing_Conditions {
         manufacturerCode as manufacturerCode,
-        countryCode      as country,
+        countryCode.code as country,
         countryFactor    as factor
     } where status.code = 'Approved';
 
     @readonly
     entity exchangeRates       as projection on my.Pricing_Conditions {
-        manufacturerCode as manufacturerCode,
-        localCurrency    as currency,
-        countryFactor    as factor
+        manufacturerCode   as manufacturerCode,
+        localCurrency.code as currency,
+        countryFactor      as factor
     } where status.code = 'Approved';
 
     @readonly
     entity manufacturerDealers as projection on my.Vendor_List {
         manufacturerCode      as manufacturerCode,
-        countryCode           as country,
+        countryCode.code      as country,
         localManufacturerCode as dealerCode
     } where status.code = 'Approved';
 }
