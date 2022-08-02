@@ -1,1 +1,1 @@
-GET http://localhost:4004/v2/MroSrv/countryFactor
+GET http://localhost:4004/v2/MroSrv/callBind

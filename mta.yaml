@@ -11,6 +11,7 @@ modules:
       - name: uaa_mrobe
       - name: mrobe_connectivity_service
       - name: mrobe_destination_service
+      - name: application-logs
     provides:
       - name: srv-api
         properties:
@@ -62,6 +63,12 @@ resources:
     parameters:
       service-plan: lite
       shared: true
+  - name: application-logs
+    parameters:
+      service-name: application-logs
+      service: application-logs
+      service-plan: lite
+    type: org.cloudfoundry.managed-service      
 
   - name: mrobe_destination_service
     type: destination
