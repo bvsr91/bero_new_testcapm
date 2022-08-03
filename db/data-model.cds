@@ -60,7 +60,7 @@ entity Pricing_Conditions : managed {
         initiator            : String;
         approver             : String;
         ld_initiator         : String;
-        local_ownership      : Boolean;
+        // local_ownership      : Boolean;
         lo_exchangeRate      : Boolean;
         lo_countryFactor     : Boolean;
         // to_status            : Association to statusList;

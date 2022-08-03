@@ -136,12 +136,12 @@ annotate MroService.PricingConditions with @(UI : {
             ![@HTML5.CssDefaults] : {width : '7rem'},
             ![@UI.Importance]     : #Medium
         },
-        {
-            $Type                 : 'UI.DataField',
-            Value                 : local_ownership,
-            ![@HTML5.CssDefaults] : {width : '8rem'},
-            ![@UI.Importance]     : #High
-        },
+        // {
+        //     $Type                 : 'UI.DataField',
+        //     Value                 : local_ownership,
+        //     ![@HTML5.CssDefaults] : {width : '8rem'},
+        //     ![@UI.Importance]     : #High
+        // },
         {
             $Type                 : 'UI.DataField',
             Value                 : status_code,
