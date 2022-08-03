@@ -33,6 +33,8 @@ annotate schema.Pricing_Conditions {
     approver             @title           : '{i18n>approver}'  @UI.HiddenFilter : true;
     status               @title           : '{i18n>status}';
     local_ownership      @title           : '{i18n>local_ownership}';
+    lo_exchangeRate      @title           : '{i18n>lo_exchangeRate}';
+    lo_countryFactor     @title           : '{i18n>lo_countryFactor}';
 }
 
 annotate schema.Roles {

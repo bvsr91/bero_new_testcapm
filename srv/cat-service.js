@@ -34,15 +34,20 @@ module.exports = async function () {
     this.before("INSERT", "PricingConditions", async (req, next) => {
         try {
             var status = "Pending";
-            if (req.data.local_ownership) {
-                if (req.data.local_ownership === true) {
+            if (req.data.lo_exchangeRate) {
+                if (req.data.lo_exchangeRate === true) {
+                    status = "Forwarded";
+                }
+            }
+            if (req.data.lo_countryFactor) {
+                if (req.data.lo_countryFactor === true) {
                     status = "Forwarded";
                 }
             }
             req.data.CreatedBy = req.user.id.toUpperCase();
             var result = await SELECT.from(User_Approve_Maintain).where({ userid: req.user.id.toUpperCase() });
             if (result.length > 0) {
-                req.data.approver = req.data.local_ownership ? "" : result[0].managerid;
+                req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
                 req.data.initiator = req.user.id.toUpperCase();
                 req.data.status_code = status;
                 req.data.initiator = req.user.id.toUpperCase();
@@ -51,7 +56,7 @@ module.exports = async function () {
                 if (req.data.p_notif) {
                     req.data.p_notif.Pricing_Conditions_manufacturerCode = req.data.manufacturerCode;
                     req.data.p_notif.Pricing_Conditions_countryCode_code = req.data.countryCode_code;
-                    req.data.p_notif.approver = req.data.local_ownership ? "" : result[0].managerid;
+                    req.data.p_notif.approver = status === "Forwarded" ? "" : result[0].managerid;
                     req.data.p_notif.user = req.user.id;
                     req.data.p_notif.status_code = status;
                     req.data.p_notif.CreatedBy = req.user.id.toUpperCase();
@@ -122,7 +127,7 @@ module.exports = async function () {
     this.after("INSERT", "PricingConditions", async (req, next) => {
         // var finalInfo = await next();
         try {
-            if (req.local_ownership) {
+            if (req.lo_exchangeRate || req.lo_countryFactor) {
                 // var aVal = await sendNotificationToLDT(req.data);
                 var aUsers = await SELECT.from(UserDetails).where({ country: req.countryCode_code, role_role: 'LDT' });
                 var aMails = [];
@@ -463,7 +468,7 @@ module.exports = async function () {
     this.before("UPDATE", "PricingConditions", async (req, next) => {
         try {
             if (req.data.status_code !== "Deleted") {
-                if (req.data.local_ownership === true && req.data.ld_initiator === null) {
+                if ((req.data.lo_exchangeRate === true || req.data.lo_countryFactor === true) && req.data.ld_initiator === null) {
                     req.data.status_code = "Forwarded";
                     req.data.approver = "";
                 } else {
@@ -496,10 +501,12 @@ module.exports = async function () {
         try {
             if (oPricingConditions.status_code !== "Deleted") {
                 var sUser, status;
-                if (oPricingConditions.local_ownership === true && oPricingConditions.ld_initiator !== null) {
+                if ((oPricingConditions.lo_exchangeRate === true || req.data.lo_countryFactor === true)
+                    && oPricingConditions.ld_initiator !== null) {
                     sUser = oPricingConditions.ld_initiator;
                     status = "Pending";
-                } else if (oPricingConditions.local_ownership === true && oPricingConditions.ld_initiator === null) {
+                } else if ((oPricingConditions.lo_exchangeRate === true || oPricingConditions.lo_countryFactor === true)
+                    && oPricingConditions.ld_initiator === null) {
                     sUser = req.user.id;
                     status = "Forwarded";
                     var aUsers = await SELECT.from(UserDetails).where({ country: oPricingConditions.countryCode_code, role_role: 'LDT' });

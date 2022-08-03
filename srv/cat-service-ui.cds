@@ -108,13 +108,31 @@ annotate MroService.PricingConditions with @(UI : {
         },
         {
             $Type                 : 'UI.DataField',
+            Value                 : lo_countryFactor,
+            ![@HTML5.CssDefaults] : {width : '7rem'},
+            ![@UI.Importance]     : #Medium
+        },
+        {
+            $Type                 : 'UI.DataField',
             Value                 : countryFactor,
             ![@HTML5.CssDefaults] : {width : '7rem'},
             ![@UI.Importance]     : #Medium
         },
         {
             $Type                 : 'UI.DataField',
+            Value                 : lo_exchangeRate,
+            ![@HTML5.CssDefaults] : {width : '7rem'},
+            ![@UI.Importance]     : #Medium
+        },
+        {
+            $Type                 : 'UI.DataField',
             Value                 : exchangeRate,
+            ![@HTML5.CssDefaults] : {width : '7rem'},
+            ![@UI.Importance]     : #Medium
+        },
+        {
+            $Type                 : 'UI.DataField',
+            Value                 : localCurrency_code,
             ![@HTML5.CssDefaults] : {width : '7rem'},
             ![@UI.Importance]     : #Medium
         },
@@ -141,12 +159,6 @@ annotate MroService.PricingConditions with @(UI : {
         //     Value             : countryDesc,
         //     ![@UI.Importance] : #Low
         // },
-        {
-            $Type                 : 'UI.DataField',
-            Value                 : localCurrency_code,
-            ![@HTML5.CssDefaults] : {width : '7rem'},
-            ![@UI.Importance]     : #Medium
-        },
         {
             $Type                 : 'UI.DataField',
             Value                 : validityStart,
