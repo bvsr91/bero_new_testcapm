@@ -3,8 +3,8 @@ using ferrero.mro as my from '../db/data-model';
 // @requires : 'authenticated-user'
 // @requires : 'mrobeUser_sc'
 @(restrict : [{
-    grant : 'READ',
-    to    : 'mrobeReadOnly_sc'
+    grant : '*',
+    to    : 'mrobeUser_sc'
 }])
 service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     // @readonly
@@ -99,10 +99,10 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
 
 }
 
-// @(restrict : [{
-//     grant : ['*'],
-//     to    : 'mrobeReadOnly_sc'
-// }])
+@(restrict : [{
+    grant : ['READ'],
+    to    : 'mrobeReadOnly_sc'
+}])
 service MroReadService @(path : '/MroReadSrv') {
     @readonly
     entity countryFactor       as projection on my.Pricing_Conditions {

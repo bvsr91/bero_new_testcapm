@@ -7,8 +7,7 @@
             "authenticationType": "xsuaa",
             "csrfProtection": true,
             "scope": [
-                "$XSAPPNAME.mrobeUser_sc",
-                "$XSAPPNAME.mrobeReadOnly_sc"
+                "$XSAPPNAME.mrobeUser_sc"
             ]
         },
         {
@@ -17,7 +16,6 @@
             "authenticationType": "xsuaa",
             "csrfProtection": true,
             "scope": [
-                "$XSAPPNAME.mrobeUser_sc",
                 "$XSAPPNAME.mrobeReadOnly_sc"
             ]
         }
