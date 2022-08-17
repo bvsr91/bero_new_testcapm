@@ -44,7 +44,8 @@ module.exports = async function () {
                     status = "Forwarded";
                 }
             }
-            req.data.CreatedBy = req.user.id.toUpperCase();
+            req.data.createdBy = req.user.id.toUpperCase();
+            req.data.modifiedBy = req.user.id.toUpperCase();
             var result = await SELECT.from(User_Approve_Maintain).where({ userid: req.user.id.toUpperCase() });
             if (result.length > 0) {
                 req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
@@ -59,7 +60,8 @@ module.exports = async function () {
                     req.data.p_notif.approver = status === "Forwarded" ? "" : result[0].managerid;
                     req.data.p_notif.user = req.user.id;
                     req.data.p_notif.status_code = status;
-                    req.data.p_notif.CreatedBy = req.user.id.toUpperCase();
+                    req.data.p_notif.createdBy = req.user.id.toUpperCase();
+                    req.data.p_notif.modifiedBy = req.user.id.toUpperCase();
                 }
                 return req;
             } else {
@@ -80,7 +82,8 @@ module.exports = async function () {
                 req.data.initiator = req.user.id.toUpperCase();
                 req.data.status_code = "Pending";
                 req.data.uuid = cds.utils.uuid();
-                req.data.CreatedBy = req.user.id.toUpperCase();
+                req.data.createdBy = req.user.id.toUpperCase();
+                req.data.modifiedBy = req.user.id.toUpperCase();
 
                 if (req.data.v_notif) {
                     req.data.v_notif.Vendor_List_manufacturerCode = req.data.manufacturerCode;
@@ -88,7 +91,8 @@ module.exports = async function () {
                     req.data.v_notif.Vendor_List_countryCode_code = req.data.countryCode_code;
                     req.data.v_notif.approver = result[0].managerid;
                     req.data.v_notif.status_code = "Pending";
-                    req.data.v_notif.CreatedBy = req.user.id.toUpperCase();
+                    req.data.v_notif.createdBy = req.user.id.toUpperCase();
+                    req.data.v_notif.modifiedBy = req.user.id.toUpperCase();
                 }
 
                 return req;
@@ -172,14 +176,16 @@ module.exports = async function () {
         var logOnUser = req.user.id.toUpperCase();
         // req.data.initiator = req.user.id.toUpperCase();
         req.data.uuid = cds.utils.uuid();
-        req.data.CreatedBy = req.user.id.toUpperCase();
+        req.data.createdBy = req.user.id.toUpperCase();
+        req.data.modifiedBy = req.user.id.toUpperCase();
         return req;
     });
     this.before("INSERT", "PricingComments", async (req, next) => {
         var logOnUser = req.user.id.toUpperCase();
         // req.data.initiator = req.user.id.toUpperCase();
         req.data.uuid = cds.utils.uuid();
-        req.data.CreatedBy = req.user.id.toUpperCase();
+        req.data.createdBy = req.user.id.toUpperCase();
+        req.data.modifiedBy = req.user.id.toUpperCase();
         return req;
     });
 
@@ -343,7 +349,8 @@ module.exports = async function () {
     this.on("INSERT", "VendorComments", async (req, next) => {
         var VendorComments = await next();
         try {
-            req.data.CreatedBy = req.user.id.toUpperCase();
+            req.data.createdBy = req.user.id.toUpperCase();
+            req.data.modifiedBy = req.user.id.toUpperCase();
             oVendList = await SELECT.one(Vendor_List).where(
                 {
                     manufacturerCode: VendorComments.Vendor_List_manufacturerCode,
@@ -393,7 +400,8 @@ module.exports = async function () {
     this.on("INSERT", "PricingComments", async (req, next) => {
         var PricingComments = await next();
         try {
-            req.data.CreatedBy = req.user.id.toUpperCase();
+            req.data.createdBy = req.user.id.toUpperCase();
+            req.data.modifiedBy = req.user.id.toUpperCase();
             oPricingCond = await SELECT.one(Pricing_Conditions).where(
                 {
                     manufacturerCode: PricingComments.Pricing_Conditions_manufacturerCode,
