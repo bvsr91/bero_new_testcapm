@@ -201,6 +201,10 @@ module.exports = async function () {
                     countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
                 }
             );
+            if (oPricingCond === null) {
+                req.reject(400, "Record is not available in the Pricing Conditions table for the given Manufacturer Code : " + PricingNotifications.Pricing_Conditions_manufacturerCode
+                    + " and  Country Code : " + PricingNotifications.Pricing_Conditions_countryCode_code);
+            }
             oResult = await SELECT.one(UserDetails).where({ userid: oPricingCond.createdBy });
             var mailId, managerid;
             if (oResult) {
@@ -239,6 +243,12 @@ module.exports = async function () {
                     countryCode_code: VendorNotifications.Vendor_List_countryCode_code
                 }
             );
+            if (oVendList === null) {
+                req.reject(400, "Record is not available in the Vendot List table for the given Manufacturer Code : "
+                    + VendorNotifications.Vendor_List_manufacturerCode + " , Local Manufacturer Code : "
+                    + VendorNotifications.Vendor_List_localManufacturerCode                    
+                    + " and  Country Code : " + VendorNotifications.Vendor_List_countryCode_code);
+            }
             oResult = await SELECT.one(UserDetails).where({ userid: oVendList.createdBy });
             var mailId, managerid;
             if (oResult) {
