@@ -1,13 +1,9 @@
-PUT http://localhost:4004/v2/MroSrv/VendorNotifications(guid'82d54c72-472c-483a-9158-a99b233cb177')
+PUT http://localhost:4004/v2/MroSrv/PricingNotifications(guid'6706dd97-5d18-43d2-9c36-3a0469b6105b')
 Content-Type: application/json;IEEE754Compatible=true
 
-{
-    "uuid":"82d54c72-472c-483a-9158-a99b233cb177",
-    "Vendor_List_manufacturerCode":"12",
-    "Vendor_List_countryCode_code":"IT",
-    "Vendor_List_localManufacturerCode":"2312",
-    "completionDate":"2022-08-17T10:02:46.446Z",
-    "approvedDate":"2022-08-17T10:02:46.446Z",
-    "approver":"EMURIDIVY1",
-    "status_code":"Approved"
-}
+{"uuid":"6706dd97-5d18-43d2-9c36-3a0469b6105b",
+"Pricing_Conditions_manufacturerCode":"5566",
+"Pricing_Conditions_countryCode_code":"DE",
+"completionDate":"2022-08-17T12:41:59.116Z",
+"approvedDate":"2022-08-17T12:41:59.116Z",
+"approver":"BUTUKSRIN1","status_code":"Approved"}
