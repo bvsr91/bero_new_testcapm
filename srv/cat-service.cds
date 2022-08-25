@@ -1,6 +1,6 @@
 using ferrero.mro as my from '../db/data-model';
 
-// @requires : 'authenticated-user'
+@requires : 'authenticated-user'
 // @requires : 'mrobeUser_sc'
 @(restrict : [{
     grant : '*',
@@ -34,8 +34,8 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     @cds.redirection.target
     entity VendorNotifications    as projection on my.Vendor_Notifications;
 
-    action   approvePricing(uuid : String, manufacturerCode : String, countryCode : String)         returns String;
-    action   acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String) returns String;
+    action approvePricing(uuid : String, manufacturerCode : String, countryCode : String)         returns String;
+    action acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String) returns String;
 
     type oVendList : many {
         manufacturerCode      : String(10);
@@ -43,7 +43,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
         countryCode           : String(10);
     };
 
-    action   batchCreateVendor(aData : oVendList)                                                   returns String;
+    action batchCreateVendor(aData : oVendList)                                                   returns String;
 
     @readonly
     entity CheckUserRole          as projection on my.Users_Role_Assign;
@@ -83,22 +83,9 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
         where
             code not in (
                 'Forwarded', 'In Progress');
-
-    type oCountryFactor : many {
-        manufacturerCode : String(10);
-        country          : String(10);
-        factor           : String;
-    };
-
-    type countryFactors : {
-        countryFactors : oCountryFactor;
-    }
-
-    function countryFactor_1()                                                                      returns oCountryFactor;
-
-
 }
 
+@requires : 'authenticated-user'
 @(restrict : [{
     grant : ['READ'],
     to    : 'mrobeReadOnly_sc'
