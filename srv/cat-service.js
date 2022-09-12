@@ -94,7 +94,7 @@ module.exports = async function () {
 
                 if (req.data.v_notif) {
                     req.data.v_notif.Vendor_List_manufacturerCode = req.data.manufacturerCode;
-                    req.data.v_notif.Vendor_List_localManufacturerCode = req.data.localManufacturerCode;
+                    req.data.v_notif.localManufacturerCode = req.data.localManufacturerCode;
                     req.data.v_notif.Vendor_List_countryCode_code = req.data.countryCode_code;
                     req.data.v_notif.approver = result[0].managerid;
                     req.data.v_notif.status_code = "Pending";
@@ -246,14 +246,14 @@ module.exports = async function () {
             oVendList = await SELECT.one(Vendor_List).where(
                 {
                     manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
-                    localManufacturerCode: VendorNotifications.Vendor_List_localManufacturerCode,
+                    localManufacturerCode: VendorNotifications.localManufacturerCode,
                     countryCode_code: VendorNotifications.Vendor_List_countryCode_code
                 }
             );
             if (oVendList === null) {
                 req.reject(400, "Record is not available in the Vendot List table for the given Manufacturer Code : "
                     + VendorNotifications.Vendor_List_manufacturerCode + " , Local Manufacturer Code : "
-                    + VendorNotifications.Vendor_List_localManufacturerCode
+                    + VendorNotifications.localManufacturerCode
                     + " and  Country Code : " + VendorNotifications.Vendor_List_countryCode_code);
             }
             oResult = await SELECT.one(UserDetails).where({ userid: oVendList.createdBy });
@@ -267,14 +267,14 @@ module.exports = async function () {
             }).where(
                 {
                     manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
-                    localManufacturerCode: VendorNotifications.Vendor_List_localManufacturerCode,
+                    localManufacturerCode: VendorNotifications.localManufacturerCode,
                     countryCode_code: VendorNotifications.Vendor_List_countryCode_code
                 }
             );
 
             await vendorNoti.mainPayload({
                 requestType: "Approved",
-                requestDetail: "Manufacturer- " + VendorNotifications.Vendor_List_manufacturerCode + " & Local Manufacturer- " + VendorNotifications.Vendor_List_localManufacturerCode
+                requestDetail: "Manufacturer- " + VendorNotifications.Vendor_List_manufacturerCode + " & Local Manufacturer- " + VendorNotifications.localManufacturerCode
                     + " & Country- " + VendorNotifications.Vendor_List_countryCode_code,
                 from_user: req.user.id.toUpperCase(),
                 recipients: [mailId],
@@ -375,7 +375,7 @@ module.exports = async function () {
             oVendList = await SELECT.one(Vendor_List).where(
                 {
                     manufacturerCode: VendorComments.Vendor_List_manufacturerCode,
-                    localManufacturerCode: VendorComments.Vendor_List_localManufacturerCode,
+                    localManufacturerCode: VendorComments.localManufacturerCode,
                     countryCode_code: VendorComments.Vendor_List_countryCode_code
                 }
             );
@@ -402,14 +402,14 @@ module.exports = async function () {
             }).where(
                 {
                     manufacturerCode: VendorComments.Vendor_List_manufacturerCode,
-                    localManufacturerCode: VendorComments.Vendor_List_localManufacturerCode,
+                    localManufacturerCode: VendorComments.localManufacturerCode,
                     countryCode_code: VendorComments.Vendor_List_countryCode_code
                 }
             );
 
             await vendorNoti.mainPayload({
                 requestType: "Rejected",
-                requestDetail: "Manufacturer- " + VendorComments.Vendor_List_manufacturerCode + " & Local Manufacturer- " + VendorComments.Vendor_List_localManufacturerCode
+                requestDetail: "Manufacturer- " + VendorComments.Vendor_List_manufacturerCode + " & Local Manufacturer- " + VendorComments.localManufacturerCode
                     + " & Country- " + VendorComments.Vendor_List_countryCode_code,
                 from_user: req.user.id.toUpperCase(),
                 recipients: [mailId],

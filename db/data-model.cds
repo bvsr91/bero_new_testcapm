@@ -28,12 +28,13 @@ entity User_Approve_Maintain {
 
 entity Vendor_List : managed {
     key manufacturerCode          : String(10);
-    key localManufacturerCode     : String(10);
+        // key localManufacturerCode     : String(10);
         // @Consumption.filter.hidden : true
     key countryCode               : Association to countriesCodeList
                                                                     @description     : 'Country'
                                                                     @Common          : {Text : 'countryCode.desc'};
         uuid                      : UUID                            @UI.HiddenFilter : true;
+        localManufacturerCode     : String(10);
         manufacturerCodeDesc      : String(35);
         localManufacturerCodeDesc : String(35);
         initiator                 : String(10);
@@ -124,12 +125,13 @@ entity Pricing_Notifications : managed {
 }
 
 entity Vendor_Notifications : managed {
-    key uuid           : UUID;
-        approvedDate   : Timestamp;
-        approver       : String;
-        completionDate : Timestamp;
-        status         : Association to statusList;
-        Vendor_List    : Association to Vendor_List;
+    key uuid                  : UUID;
+        approvedDate          : Timestamp;
+        approver              : String;
+        completionDate        : Timestamp;
+        localManufacturerCode : String(10);
+        status                : Association to statusList;
+        Vendor_List           : Association to Vendor_List;
 }
 
 view UserDetails as

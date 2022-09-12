@@ -78,6 +78,11 @@ annotate schema.Pricing_Notifications {
     uuid                                @UI.HiddenFilter : true;
 }
 
+annotate schema.countriesCodeList {
+    code @title : '{i18n>countryCode}';
+    desc @title : '{i18n>desc}';
+}
+
 
 // annotate schema.vendorComments {
 //     id @UI.Hidden : true;

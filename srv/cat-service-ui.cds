@@ -235,7 +235,8 @@ annotate MroService.VendorNotifications_U with @(UI : {LineItem : [
     },
     {
         $Type             : 'UI.DataField',
-        Value             : Vendor_List_localManufacturerCode,
+        // Value             : Vendor_List_localManufacturerCode,
+        Value             : localManufacturerCode,
         ![@UI.Importance] : #High,
         Label             : 'Local Manufacturer'
     },
@@ -284,7 +285,8 @@ annotate MroService.VendorNotifications_A with @(UI : {LineItem : [
     },
     {
         $Type             : 'UI.DataField',
-        Value             : Vendor_List_localManufacturerCode,
+        // Value             : Vendor_List_localManufacturerCode,
+        Value             : localManufacturerCode,
         ![@UI.Importance] : #High,
         Label             : 'Local Manufacturer'
     },
