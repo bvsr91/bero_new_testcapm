@@ -101,10 +101,11 @@ entity countriesCodeList {
 
 // @cds.autoexpose
 entity Vendor_Comments : managed {
-    key uuid         : UUID;
-        Comment      : String;
-        Vendor_List  : Association to Vendor_List;
-        vendor_Notif : Association to Vendor_Notifications;
+    key uuid                  : UUID;
+        Comment               : String;
+        localManufacturerCode : String(10);
+        Vendor_List           : Association to Vendor_List;
+        vendor_Notif          : Association to Vendor_Notifications;
 }
 
 entity Pricing_Comments : managed {
