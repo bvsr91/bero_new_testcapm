@@ -121,7 +121,7 @@ module.exports = async function () {
                 // var oManagerInfo = await SELECT.one(Users_Role_Assign).where({ userid: managerid });
             }
 
-            await vendorNoti.mainPayload({
+            vendorNoti.mainPayload({
                 requestType: "New",
                 requestDetail: "Manufacturer- " + req.manufacturerCode + " & Local Manufacturer- " + req.localManufacturerCode
                     + " & Country- " + req.countryCode_code,
@@ -146,7 +146,7 @@ module.exports = async function () {
                     for (var a of aUsers) {
                         aMails.push(a.mail_id);
                     }
-                    await createNoti.mainPayload({
+                    createNoti.mainPayload({
                         requestType: "New",
                         requestDetail: "Manufacturer- " + req.manufacturerCode + " & Country- " + req.countryCode_code,
                         from_user: req.initiator,
@@ -165,7 +165,7 @@ module.exports = async function () {
                     // var oManagerInfo = await SELECT.one(Users_Role_Assign).where({ userid: managerid });
                 }
 
-                await createNoti.mainPayload({
+                createNoti.mainPayload({
                     requestType: "New",
                     requestDetail: "Manufacturer- " + req.manufacturerCode + " & Country- " + req.countryCode_code,
                     from_user: req.initiator,
@@ -227,7 +227,7 @@ module.exports = async function () {
                 }
             );
 
-            await createNoti.mainPayload({
+            createNoti.mainPayload({
                 requestType: "Approved",
                 requestDetail: "Manufacturer- " + PricingNotifications.Pricing_Conditions_manufacturerCode + " & Country- " + PricingNotifications.Pricing_Conditions_countryCode_code,
                 from_user: PricingNotifications.approver,
@@ -246,7 +246,7 @@ module.exports = async function () {
             oVendList = await SELECT.one(Vendor_List).where(
                 {
                     manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
-                    localManufacturerCode: VendorNotifications.localManufacturerCode,
+                    // localManufacturerCode: VendorNotifications.localManufacturerCode,
                     countryCode_code: VendorNotifications.Vendor_List_countryCode_code
                 }
             );
@@ -267,12 +267,12 @@ module.exports = async function () {
             }).where(
                 {
                     manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
-                    localManufacturerCode: VendorNotifications.localManufacturerCode,
+                    // localManufacturerCode: VendorNotifications.localManufacturerCode,
                     countryCode_code: VendorNotifications.Vendor_List_countryCode_code
                 }
             );
 
-            await vendorNoti.mainPayload({
+            vendorNoti.mainPayload({
                 requestType: "Approved",
                 requestDetail: "Manufacturer- " + VendorNotifications.Vendor_List_manufacturerCode + " & Local Manufacturer- " + VendorNotifications.localManufacturerCode
                     + " & Country- " + VendorNotifications.Vendor_List_countryCode_code,
@@ -321,7 +321,7 @@ module.exports = async function () {
                     );
                 }
             }
-            await createNoti.mainPayload({
+            createNoti.mainPayload({
                 manufacturerCode: "Manufacturer Code: " + req.data.manufacturerCode,
                 countryCode_code: "Country Code: " + req.data.countryCode_code,
                 from_mail: req.user.id.toUpperCase(),
@@ -375,7 +375,7 @@ module.exports = async function () {
             oVendList = await SELECT.one(Vendor_List).where(
                 {
                     manufacturerCode: VendorComments.Vendor_List_manufacturerCode,
-                    localManufacturerCode: VendorComments.localManufacturerCode,
+                    // localManufacturerCode: VendorComments.localManufacturerCode,
                     countryCode_code: VendorComments.Vendor_List_countryCode_code
                 }
             );
@@ -402,12 +402,12 @@ module.exports = async function () {
             }).where(
                 {
                     manufacturerCode: VendorComments.Vendor_List_manufacturerCode,
-                    localManufacturerCode: VendorComments.localManufacturerCode,
+                    // localManufacturerCode: VendorComments.localManufacturerCode,
                     countryCode_code: VendorComments.Vendor_List_countryCode_code
                 }
             );
 
-            await vendorNoti.mainPayload({
+            vendorNoti.mainPayload({
                 requestType: "Rejected",
                 requestDetail: "Manufacturer- " + VendorComments.Vendor_List_manufacturerCode + " & Local Manufacturer- " + VendorComments.localManufacturerCode
                     + " & Country- " + VendorComments.Vendor_List_countryCode_code,
@@ -458,7 +458,7 @@ module.exports = async function () {
                 }
             );
 
-            await createNoti.mainPayload({
+            createNoti.mainPayload({
                 requestType: "Rejected",
                 requestDetail: "Manufacturer- " + PricingComments.Pricing_Conditions_manufacturerCode + " & Country- " + PricingComments.Pricing_Conditions_countryCode_code,
                 from_user: req.user.id.toUpperCase(),
@@ -480,7 +480,7 @@ module.exports = async function () {
                     try {
                         var oVend = await SELECT.one(Vendor_List).where({
                             manufacturerCode: a.manufacturerCode,
-                            localManufacturerCode: a.localManufacturerCode,
+                            // localManufacturerCode: a.localManufacturerCode,
                             countryCode_code: a.countryCode_code
                         });
                         if (oVend === null) {
@@ -500,6 +500,7 @@ module.exports = async function () {
 
     this.before("UPDATE", "PricingConditions", async (req, next) => {
         try {
+            req.data.modifiedBy = req.user.id.toUpperCase();
             if (req.data.status_code !== "Deleted") {
                 if ((req.data.lo_exchangeRate === true || req.data.lo_countryFactor === true) && req.data.ld_initiator === null) {
                     req.data.status_code = "Forwarded";
@@ -552,7 +553,7 @@ module.exports = async function () {
                         for (var a of aUsers) {
                             aMails.push(a.mail_id);
                         }
-                        await createNoti.mainPayload({
+                        createNoti.mainPayload({
                             requestType: "New",
                             requestDetail: "Manufacturer- " + oPricingConditions.manufacturerCode + " & Country- " + oPricingConditions.countryCode_code,
                             from_user: sUser.toUpperCase(),
@@ -604,7 +605,7 @@ module.exports = async function () {
                     }
                 );
 
-                await createNoti.mainPayload({
+                createNoti.mainPayload({
                     requestType: "New",
                     requestDetail: "Manufacturer- " + oPricingConditions.manufacturerCode + " & Country- " + oPricingConditions.countryCode_code,
                     from_user: req.user.id.toUpperCase(),
@@ -647,4 +648,95 @@ module.exports = async function () {
         }
         return countryFactors;
     });
+
+    this.before("UPDATE", "VendorList", async (req, next) => {
+        try {
+            req.data.modifiedBy = req.user.id.toUpperCase();
+            oVendList = await SELECT.one(Vendor_List).where(
+                {
+                    manufacturerCode: req.data.manufacturerCode,
+                    countryCode_code: req.data.countryCode_code
+                }
+            );
+            if (oVendList.status_code === "Approved") {
+                req.reject(400, "You can not modify/update the approved record");
+            } else {
+                return req;
+            }
+        } catch (err) {
+            req.reject(400, err);
+        }
+    });
+
+    this.on("UPDATE", "VendorList", async (req, next) => {
+        var VendorList = await next();
+        try {
+            oVendList = await SELECT.one(Vendor_List).where(
+                {
+                    manufacturerCode: VendorList.manufacturerCode,
+                    countryCode_code: VendorList.countryCode_code
+                }
+            );
+            result = await SELECT.from(UserDetails).where({ userid: oVendList.approver });
+            var mailId, managerid;
+            if (result.length > 0) {
+                managerid = result[0].managerid;
+                mailId = result[0].mail_id;
+                // var oManagerInfo = await SELECT.one(Users_Role_Assign).where({ userid: managerid });
+            }
+
+            // await UPDATE(Vendor_List).with({
+            //     status_code: VendorList.status_code,
+            //     modifiedBy: req.user.id.toUpperCase()
+            // }).where(
+            //     {
+            //         manufacturerCode: VendorList.manufacturerCode,
+            //         countryCode_code: VendorList.countryCode_code
+            //     }
+            // );
+            await UPDATE(Vendor_Notifications).with({
+                status_code: VendorList.status_code,
+                localManufacturerCode: VendorList.localManufacturerCode,
+                modifiedBy: req.user.id.toUpperCase()
+            }).where(
+                {
+                    Vendor_List_manufacturerCode: VendorList.manufacturerCode,
+                    Vendor_List_countryCode_code: VendorList.countryCode_code
+                }
+            );
+
+            vendorNoti.mainPayload({
+                requestType: "New",
+                requestDetail: "Manufacturer- " + VendorList.manufacturerCode + " & Local Manufacturer- " + VendorList.localManufacturerCode
+                    + " & Country- " + VendorList.countryCode_code,
+                from_user: req.user.id.toUpperCase(),
+                recipients: [mailId],
+                priority: "High"
+            });
+
+        } catch (err) {
+            req.reject(400, err);
+        }
+        return VendorList;
+    });
+
+    this.before("UPDATE", "VendorList", async (req, next) => {
+        try {
+            req.data.modifiedBy = req.user.id.toUpperCase();
+            oVendList = await SELECT.one(Vendor_List).where(
+                {
+                    manufacturerCode: req.data.manufacturerCode,
+                    countryCode_code: req.data.countryCode_code
+                }
+            );
+            if (oVendList.status_code === "Approved") {
+                req.reject(400, "You can not modify/update the approved record");
+            } else {
+                return req;
+            }
+        } catch (err) {
+            req.reject(400, err);
+        }
+    });
+
 }

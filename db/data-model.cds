@@ -58,9 +58,10 @@ entity Pricing_Conditions : managed {
         countryFactor        : Decimal(4, 2);
         validityStart        : Date;
         validityEnd          : Date;
-        initiator            : String;
-        approver             : String;
-        ld_initiator         : String;
+        initiator            : String(10);
+        approver             : String(10);
+        ld_initiator         : String(10);
+        localApprover        : String(10);
         // local_ownership      : Boolean;
         lo_exchangeRate      : Boolean;
         lo_countryFactor     : Boolean;

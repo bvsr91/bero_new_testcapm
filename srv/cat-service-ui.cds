@@ -190,6 +190,12 @@ annotate MroService.PricingConditions with @(UI : {
             ![@UI.Importance]     : #Medium
         },
         {
+            $Type                 : 'UI.DataField',
+            Value                 : localApprover,
+            ![@HTML5.CssDefaults] : {width : '8rem'},
+            ![@UI.Importance]     : #Medium
+        },
+        {
             $Type             : 'UI.DataField',
             Value             : createdAt,
             ![@UI.Importance] : #Low
