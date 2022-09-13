@@ -34,28 +34,43 @@ module.exports = async function () {
     this.before("INSERT", "PricingConditions", async (req, next) => {
         try {
             var status = "Pending";
-            if (req.data.lo_exchangeRate) {
-                if (req.data.lo_exchangeRate === true) {
-                    status = "Forwarded";
-                }
+            // if (req.data.lo_exchangeRate) {
+            //     if (req.data.lo_exchangeRate === true) {
+            //         status = "Forwarded";
+            //     }
+            // }
+            // if (req.data.lo_countryFactor) {
+            //     if (req.data.lo_countryFactor === true) {
+            //         status = "Forwarded";
+            //     }
+            // }
+
+            if (req.data.lo_exchangeRate === true && req.data.lo_countryFactor === true) {
+                status = "Forwarded";
             }
-            if (req.data.lo_countryFactor) {
-                if (req.data.lo_countryFactor === true) {
-                    status = "Forwarded";
-                }
-            }
+
             req.data.createdBy = req.user.id.toUpperCase();
             req.data.modifiedBy = req.user.id.toUpperCase();
             var result = await SELECT.from(User_Approve_Maintain).where({ userid: req.user.id.toUpperCase() });
             if (result.length > 0) {
-                if (req.data.lo_exchangeRate || req.data.lo_countryFactor) {
+                if (req.data.lo_exchangeRate === true || req.data.lo_countryFactor === true) {
                     // var aVal = await sendNotificationToLDT(req.data);
                     var aUsers = await SELECT.from(UserDetails).where({ country: req.data.countryCode_code, role_role: 'LDT' });
                     if (aUsers.length === 0) {
                         req.error(400, "No Local Delivery teams available for the country: " + req.data.countryCode_code);
                     }
                 }
-                req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
+                var sApprover;
+                if (status === "Forwarded") {
+                    sApprover = "";
+                    req.data.approver = "";
+                    req.data.loApprover = "";
+                } else {
+                    sApprover = result[0].managerid;
+                    req.data.approver = sApprover;
+                    req.data.loApprover = "";
+                }
+                // req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
                 req.data.initiator = req.user.id.toUpperCase();
                 req.data.status_code = status;
                 req.data.initiator = req.user.id.toUpperCase();
@@ -64,7 +79,7 @@ module.exports = async function () {
                 if (req.data.p_notif) {
                     req.data.p_notif.Pricing_Conditions_manufacturerCode = req.data.manufacturerCode;
                     req.data.p_notif.Pricing_Conditions_countryCode_code = req.data.countryCode_code;
-                    req.data.p_notif.approver = status === "Forwarded" ? "" : result[0].managerid;
+                    req.data.p_notif.approver = sApprover;
                     req.data.p_notif.user = req.user.id.toUpperCase();
                     req.data.p_notif.status_code = status;
                     req.data.p_notif.createdBy = req.user.id.toUpperCase();
@@ -138,7 +153,7 @@ module.exports = async function () {
     this.after("INSERT", "PricingConditions", async (req, next) => {
         // var finalInfo = await next();
         try {
-            if (req.lo_exchangeRate || req.lo_countryFactor) {
+            if (req.lo_exchangeRate === true && req.lo_countryFactor === true) {
                 // var aVal = await sendNotificationToLDT(req.data);
                 var aUsers = await SELECT.from(UserDetails).where({ country: req.countryCode_code, role_role: 'LDT' });
                 var aMails = [];
@@ -196,7 +211,38 @@ module.exports = async function () {
         return req;
     });
 
+    this.before("UPDATE", "PricingNotifications", async (req, next) => {
+        try {
+            PricingNotifications = req.data;
+            var status = "";
+            oPricingCond = await SELECT.one(Pricing_Conditions).where(
+                {
+                    manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
+                    countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
+                }
+            );
+            if (oPricingCond === null) {
+                req.reject(400, "Record is not available in the Pricing Conditions table for the given Manufacturer Code : " + PricingNotifications.Pricing_Conditions_manufacturerCode
+                    + " and  Country Code : " + PricingNotifications.Pricing_Conditions_countryCode_code);
+            }
+            if ((oPricingCond.lo_countryFactor === true || oPricingCond.lo_exchangeRate === true) && oPricingCond.ld_initiator === null) {
+                sUser = req.user.id;
+                status = "Forwarded";
+                var aUsers = await SELECT.from(UserDetails).where({ country: oPricingCond.countryCode_code, role_role: 'LDT' });
+                var aMails = [];
+                if (aUsers.length === 0) {
+                    req.reject(400, "No Local Delivery teams available for the country: " + oPricingCond.countryCode_code);
+                }
+            }
 
+            req.data.status_code = status !== "" ? status : req.data.status_code;
+            if (status !== "") {
+                req.data.approver = "";
+            }
+        } catch (err) {
+            req.reject(400, err);
+        }
+    });
 
     this.on("UPDATE", "PricingNotifications", async (req, next) => {
         var PricingNotifications = await next();
@@ -212,28 +258,67 @@ module.exports = async function () {
                 req.reject(400, "Record is not available in the Pricing Conditions table for the given Manufacturer Code : " + PricingNotifications.Pricing_Conditions_manufacturerCode
                     + " and  Country Code : " + PricingNotifications.Pricing_Conditions_countryCode_code);
             }
-            oResult = await SELECT.one(UserDetails).where({ userid: oPricingCond.modifiedBy });
-            var mailId, managerid;
-            if (oResult) {
-                mailId = oResult.mail_id;
-            }
-
-            await UPDATE(Pricing_Conditions).with({
-                status_code: PricingNotifications.status_code
-            }).where(
-                {
-                    manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
-                    countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
+            if ((oPricingCond.lo_countryFactor === true || oPricingCond.lo_exchangeRate === true) && oPricingCond.ld_initiator === null) {
+                sUser = req.user.id;
+                status = "Forwarded";
+                var aUsers = await SELECT.from(UserDetails).where({ country: oPricingCond.countryCode_code, role_role: 'LDT' });
+                var aMails = [];
+                if (aUsers.length > 0) {
+                    for (var a of aUsers) {
+                        aMails.push(a.mail_id);
+                    }
+                    createNoti.mainPayload({
+                        requestType: "New",
+                        requestDetail: "Manufacturer- " + oPricingCond.manufacturerCode + " & Country- " + oPricingCond.countryCode_code,
+                        from_user: sUser.toUpperCase(),
+                        recipients: aMails,
+                        priority: "High"
+                    });
+                    // await UPDATE(Pricing_Notifications).with({
+                    //     status_code: status,
+                    //     approver: "",
+                    //     modifiedBy: req.user.id.toUpperCase()
+                    // }).where(
+                    //     {
+                    //         uuid: oPricingCond.p_notif_uuid
+                    //     }
+                    // );
+                    await UPDATE(Pricing_Conditions).with({
+                        status_code: status
+                    }).where(
+                        {
+                            manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
+                            countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
+                        }
+                    );
+                    return oPricingCond;
+                } else {
+                    req.reject(400, "No Local Delivery teams available for the country: " + oPricingCond.countryCode_code);
                 }
-            );
+            } else {
+                oResult = await SELECT.one(UserDetails).where({ userid: oPricingCond.modifiedBy });
+                var mailId, managerid;
+                if (oResult) {
+                    mailId = oResult.mail_id;
+                }
 
-            createNoti.mainPayload({
-                requestType: "Approved",
-                requestDetail: "Manufacturer- " + PricingNotifications.Pricing_Conditions_manufacturerCode + " & Country- " + PricingNotifications.Pricing_Conditions_countryCode_code,
-                from_user: PricingNotifications.approver,
-                recipients: [mailId],
-                priority: "Low"
-            });
+                await UPDATE(Pricing_Conditions).with({
+                    status_code: PricingNotifications.status_code
+                }).where(
+                    {
+                        manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
+                        countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
+                    }
+                );
+
+                createNoti.mainPayload({
+                    requestType: "Approved",
+                    requestDetail: "Manufacturer- " + PricingNotifications.Pricing_Conditions_manufacturerCode + " & Country- " + PricingNotifications.Pricing_Conditions_countryCode_code,
+                    from_user: PricingNotifications.approver,
+                    recipients: [mailId],
+                    priority: "Low"
+                });
+            }
         } catch (err) {
             req.reject(400, err);
         }
@@ -501,10 +586,26 @@ module.exports = async function () {
     this.before("UPDATE", "PricingConditions", async (req, next) => {
         try {
             req.data.modifiedBy = req.user.id.toUpperCase();
-            if (req.data.status_code !== "Deleted") {
-                if ((req.data.lo_exchangeRate === true || req.data.lo_countryFactor === true) && req.data.ld_initiator === null) {
+            req.data.modifiedBy = req.user.id.toUpperCase();
+            oPricing = await SELECT.one(Pricing_Conditions).where(
+                {
+                    manufacturerCode: req.data.manufacturerCode,
+                    countryCode_code: req.data.countryCode_code
+                }
+            );
+            if (oPricing.status_code === "Approved") {
+                req.reject(400, "You can not modify/update the approved record");
+            }
+            var oUser = await SELECT.one(UserDetails).where({ userid: req.user.id.toUpperCase() });
+            // var aMails = [];
+            // if (aUsers.length === 0) {
+            //     req.reject(400, "No Local Delivery teams available for the country: " + oPricingCond.countryCode_code);
+            // }
+            // if (req.data.status_code !== "Deleted") {
+            if (oPricing.status_code !== "Approved" && oPricing.status_code !== "Forwarded") {
+                if ((req.data.lo_exchangeRate === true || req.data.lo_countryFactor === true) && req.data.ld_initiator === null && oUser.role_role === "CDT") {
                     req.data.status_code = "Forwarded";
-                    req.data.approver = "";
+                    // req.data.approver = "";
                     var aUsers = await SELECT.from(UserDetails).where({ country: req.data.countryCode_code, role_role: 'LDT' });
                     if (aUsers.length === 0) {
                         req.error(400, "No Local Delivery teams available for the country code: " + req.data.countryCode_code);
@@ -523,6 +624,9 @@ module.exports = async function () {
                         } else {
                             req.error(400, "No manager assigned to the user");
                         }
+                        if (oUser.role_role === "LDT") {
+                            req.data.localApprover = oUser.managerid;
+                        }
                     } else {
                         req.error(400, "No manager assigned to the user");
                     }
@@ -537,6 +641,7 @@ module.exports = async function () {
     this.on("UPDATE", "PricingConditions", async (req, next) => {
         var oPricingConditions = await next();
         try {
+            var oUser = await SELECT.one(UserDetails).where({ userid: req.user.id.toUpperCase() });
             if (oPricingConditions.status_code !== "Deleted") {
                 var sUser, status;
                 if ((oPricingConditions.lo_exchangeRate === true || req.data.lo_countryFactor === true)
@@ -544,7 +649,7 @@ module.exports = async function () {
                     sUser = oPricingConditions.ld_initiator;
                     status = "Pending";
                 } else if ((oPricingConditions.lo_exchangeRate === true || oPricingConditions.lo_countryFactor === true)
-                    && oPricingConditions.ld_initiator === null) {
+                    && oPricingConditions.ld_initiator === null && oUser.userid === "CDT") {
                     sUser = req.user.id;
                     status = "Forwarded";
                     var aUsers = await SELECT.from(UserDetails).where({ country: oPricingConditions.countryCode_code, role_role: 'LDT' });
@@ -720,23 +825,23 @@ module.exports = async function () {
         return VendorList;
     });
 
-    this.before("UPDATE", "VendorList", async (req, next) => {
-        try {
-            req.data.modifiedBy = req.user.id.toUpperCase();
-            oVendList = await SELECT.one(Vendor_List).where(
-                {
-                    manufacturerCode: req.data.manufacturerCode,
-                    countryCode_code: req.data.countryCode_code
-                }
-            );
-            if (oVendList.status_code === "Approved") {
-                req.reject(400, "You can not modify/update the approved record");
-            } else {
-                return req;
-            }
-        } catch (err) {
-            req.reject(400, err);
-        }
-    });
+    // this.before("UPDATE", "PricingConditions", async (req, next) => {
+    //     try {
+    //         req.data.modifiedBy = req.user.id.toUpperCase();
+    //         oPricing = await SELECT.one(Pricing_Conditions).where(
+    //             {
+    //                 manufacturerCode: req.data.manufacturerCode,
+    //                 countryCode_code: req.data.countryCode_code
+    //             }
+    //         );
+    //         if (oPricing.status_code === "Approved") {
+    //             req.reject(400, "You can not modify/update the approved record");
+    //         } else {
+    //             return req;
+    //         }
+    //     } catch (err) {
+    //         req.reject(400, err);
+    //     }
+    // });
 
 }
