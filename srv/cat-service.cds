@@ -1,11 +1,11 @@
 using ferrero.mro as my from '../db/data-model';
 
-@requires : 'authenticated-user'
+// @requires : 'authenticated-user'
 // @requires : 'mrobeUser_sc'
-@(restrict : [{
-    grant : '*',
-    to    : 'mrobeUser_sc'
-}])
+// @(restrict : [{
+//     grant : '*',
+//     to    : 'mrobeUser_sc'
+// }])
 service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     // @readonly
     entity Roles                  as projection on my.Roles;

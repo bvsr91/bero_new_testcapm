@@ -585,6 +585,7 @@ module.exports = async function () {
 
     this.before("UPDATE", "PricingConditions", async (req, next) => {
         try {
+            var sUser = req.user.id.toUpperCase();
             req.data.modifiedBy = req.user.id.toUpperCase();
             req.data.modifiedBy = req.user.id.toUpperCase();
             oPricing = await SELECT.one(Pricing_Conditions).where(
@@ -648,9 +649,9 @@ module.exports = async function () {
                     && oPricingConditions.ld_initiator !== null) {
                     sUser = oPricingConditions.ld_initiator;
                     status = "Pending";
-                } else if ((oPricingConditions.lo_exchangeRate === true || oPricingConditions.lo_countryFactor === true)
-                    && oPricingConditions.ld_initiator === null && oUser.userid === "CDT") {
-                    sUser = req.user.id;
+                } else if ((oPricingConditions.lo_exchangeRate === true && oPricingConditions.lo_countryFactor === true)
+                    && oPricingConditions.ld_initiator === null && oUser.role_role === "CDT") {
+                    sUser = req.user.id.toUpperCase();
                     status = "Forwarded";
                     var aUsers = await SELECT.from(UserDetails).where({ country: oPricingConditions.countryCode_code, role_role: 'LDT' });
                     var aMails = [];
@@ -711,7 +712,7 @@ module.exports = async function () {
                 );
 
                 createNoti.mainPayload({
-                    requestType: "New",
+                    requestType: "Updated",
                     requestDetail: "Manufacturer- " + oPricingConditions.manufacturerCode + " & Country- " + oPricingConditions.countryCode_code,
                     from_user: req.user.id.toUpperCase(),
                     recipients: [mailId],

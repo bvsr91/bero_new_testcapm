@@ -1,9 +1,10 @@
-PUT http://localhost:4004/v2/MroSrv/PricingNotifications(guid'6706dd97-5d18-43d2-9c36-3a0469b6105b')
+PUT http://localhost:4004/v2/MroSrv/PricingConditions(manufacturerCode='9001',countryCode_code='DE')
 Content-Type: application/json;IEEE754Compatible=true
 
-{"uuid":"6706dd97-5d18-43d2-9c36-3a0469b6105b",
-"Pricing_Conditions_manufacturerCode":"5566",
-"Pricing_Conditions_countryCode_code":"DE",
-"completionDate":"2022-08-17T12:41:59.116Z",
-"approvedDate":"2022-08-17T12:41:59.116Z",
-"approver":"BUTUKSRIN1","status_code":"Approved"}
+{"manufacturerCodeDesc":"",
+"ld_initiator":null,
+"countryCode_code":"DE",
+"p_notif_uuid":"bf82cc41-0508-428e-9726-38d649f9eb05",
+"countryFactor":9.5,"exchangeRate":null,
+"validityStart":null,"validityEnd":null,
+"lo_exchangeRate":false,"lo_countryFactor":true,"localCurrency_code":null}
