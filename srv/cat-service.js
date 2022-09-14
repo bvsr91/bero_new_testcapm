@@ -54,8 +54,7 @@ module.exports = async function () {
             var result = await SELECT.from(User_Approve_Maintain).where({ userid: req.user.id.toUpperCase() });
             if (result.length > 0) {
                 if (req.data.lo_exchangeRate === true || req.data.lo_countryFactor === true) {
-                    // var aVal = await sendNotificationToLDT(req.data);
-                    var aUsers = await SELECT.from(UserDetails).where({ country: req.data.countryCode_code, role_role: 'LDT' });
+                    var aUsers = await SELECT.from(UserDetails).where({ country: req.data.countryCode_code, role_role: ['LDT', 'SLP'] });
                     if (aUsers.length === 0) {
                         req.error(400, "No Local Delivery teams available for the country: " + req.data.countryCode_code);
                     }
@@ -90,7 +89,8 @@ module.exports = async function () {
                 req.error(400, "Please assign manager to the user " + req.user.id.toUpperCase());
             }
         } catch (err) {
-            req.error("500", err);
+            var sMsg = err.message ? err.message : err;
+            req.error(sMsg);
         }
     });
 
@@ -154,8 +154,7 @@ module.exports = async function () {
         // var finalInfo = await next();
         try {
             if (req.lo_exchangeRate === true && req.lo_countryFactor === true) {
-                // var aVal = await sendNotificationToLDT(req.data);
-                var aUsers = await SELECT.from(UserDetails).where({ country: req.countryCode_code, role_role: 'LDT' });
+                var aUsers = await SELECT.from(UserDetails).where({ country: req.countryCode_code, role_role: ['LDT', 'SLP'] });
                 var aMails = [];
                 if (aUsers.length > 0) {
                     for (var a of aUsers) {
@@ -228,7 +227,7 @@ module.exports = async function () {
             if ((oPricingCond.lo_countryFactor === true || oPricingCond.lo_exchangeRate === true) && oPricingCond.ld_initiator === null) {
                 sUser = req.user.id;
                 status = "Forwarded";
-                var aUsers = await SELECT.from(UserDetails).where({ country: oPricingCond.countryCode_code, role_role: 'LDT' });
+                var aUsers = await SELECT.from(UserDetails).where({ country: oPricingCond.countryCode_code, role_role: ['LDT', 'SLP'] });
                 var aMails = [];
                 if (aUsers.length === 0) {
                     req.reject(400, "No Local Delivery teams available for the country: " + oPricingCond.countryCode_code);
@@ -238,6 +237,7 @@ module.exports = async function () {
             req.data.status_code = status !== "" ? status : req.data.status_code;
             if (status !== "") {
                 req.data.approver = "";
+                req.data.completionDate = null;
             }
         } catch (err) {
             req.reject(400, err);
@@ -261,7 +261,7 @@ module.exports = async function () {
             if ((oPricingCond.lo_countryFactor === true || oPricingCond.lo_exchangeRate === true) && oPricingCond.ld_initiator === null) {
                 sUser = req.user.id;
                 status = "Forwarded";
-                var aUsers = await SELECT.from(UserDetails).where({ country: oPricingCond.countryCode_code, role_role: 'LDT' });
+                var aUsers = await SELECT.from(UserDetails).where({ country: oPricingCond.countryCode_code, role_role: ['LDT', 'SLP'] });
                 var aMails = [];
                 if (aUsers.length > 0) {
                     for (var a of aUsers) {
@@ -599,10 +599,10 @@ module.exports = async function () {
             var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
             if (req.data.status_code !== "Deleted") {
                 if (oPricing.status_code !== "Approved" && oPricing.status_code !== "Forwarded") {
-                    if ((req.data.lo_exchangeRate === true && req.data.lo_countryFactor === true) && req.data.ld_initiator === null && oUser.role_role === "CDT") {
+                    if ((req.data.lo_exchangeRate === true && req.data.lo_countryFactor === true) && req.data.ld_initiator === null && (oUser.role_role === "CDT" || oUser.role_role === "SGC")) {
                         req.data.status_code = "Forwarded";
                         // req.data.approver = "";
-                        var aUsers = await SELECT.from(UserDetails).where({ country: req.data.countryCode_code, role_role: 'LDT' });
+                        var aUsers = await SELECT.from(UserDetails).where({ country: req.data.countryCode_code, role_role: ['LDT', 'SLP'] });
                         if (aUsers.length === 0) {
                             req.error(400, "No Local Delivery teams available for the country code: " + req.data.countryCode_code);
                         }
@@ -620,7 +620,7 @@ module.exports = async function () {
                             } else {
                                 req.error(400, "No manager assigned to the user");
                             }
-                            if (oUser.role_role === "LDT") {
+                            if (oUser.role_role === "LDT" || oUser.role_role === "SLP") {
                                 req.data.localApprover = oUser.managerid;
                             }
                         } else {
@@ -647,10 +647,10 @@ module.exports = async function () {
                         sUser = oPricingConditions.ld_initiator;
                         status = "Pending";
                     } else if ((oPricingConditions.lo_exchangeRate === true && oPricingConditions.lo_countryFactor === true)
-                        && oPricingConditions.ld_initiator === null && oUser.role_role === "CDT") {
+                        && oPricingConditions.ld_initiator === null && (oUser.role_role === "CDT" || oUser.role_role === "SGC")) {
                         sUser = req.user.id.toUpperCase();
                         status = "Forwarded";
-                        var aUsers = await SELECT.from(UserDetails).where({ country: oPricingConditions.countryCode_code, role_role: 'LDT' });
+                        var aUsers = await SELECT.from(UserDetails).where({ country: oPricingConditions.countryCode_code, role_role: ['LDT', 'SLP'] });
                         var aMails = [];
                         if (aUsers.length > 0) {
                             for (var a of aUsers) {

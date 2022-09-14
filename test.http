@@ -1,9 +1,4 @@
-PUT http://localhost:4004/v2/MroSrv/PricingConditions(manufacturerCode='7888',countryCode_code='DE')
+POST http://localhost:4004/v2/MroSrv/PricingConditions
 Content-Type: application/json;IEEE754Compatible=true
 
-{"manufacturerCodeDesc":"Srini test",
-"ld_initiator":null,"countryCode_code":"DE",
-"p_notif_uuid":"7f3295da-12f9-4794-bda7-7f1d350a1bc5",
-"countryFactor":null,"exchangeRate":4,"validityStart":null,
-"validityEnd":null,"lo_exchangeRate":false,"lo_countryFactor":true,
-"localCurrency_code":"USD"}
+{"manufacturerCode":"45A","countryCode_code":"IT","manufacturerCodeDesc":"checking for LDT","countryFactor":null,"exchangeRate":null,"validityStart":"2022-09-14T18:30:00.000Z","validityEnd":"2022-09-22T18:30:00.000Z","localCurrency_code":null,"lo_exchangeRate":true,"lo_countryFactor":true,"p_notif":{}}
