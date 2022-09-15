@@ -85,11 +85,11 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
                 'Forwarded', 'In Progress');
 }
 
-@requires : 'authenticated-user'
-@(restrict : [{
-    grant : ['READ'],
-    to    : 'mrobeReadOnly_sc'
-}])
+// @requires : 'authenticated-user'
+// @(restrict : [{
+//     grant : ['READ'],
+//     to    : 'mrobeReadOnly_sc'
+// }])
 service MroReadService @(path : '/MroReadSrv') {
     @readonly
     entity countryFactor       as projection on my.Pricing_Conditions {
@@ -102,7 +102,7 @@ service MroReadService @(path : '/MroReadSrv') {
     entity exchangeRates       as projection on my.Pricing_Conditions {
         manufacturerCode   as manufacturerCode,
         localCurrency.code as currency,
-        countryFactor      as factor
+        exchangeRate       as factor
     } where status.code = 'Approved';
 
     @readonly

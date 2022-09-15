@@ -1,40 +1,194 @@
 code;locale;name;descr
-EUR;de;Euro;European Euro
-USD;de;US-Dollar;United States Dollar
-CAD;de;Kanadischer Dollar;Kanadischer Dollar
-AUD;de;Australischer Dollar;Australischer Dollar
-GBP;de;Pfund;Britische Pfund
-ILS;de;Schekel;Israelische Schekel
-INR;de;Rupie;Indische Rupie
-QAR;de;RiYal;Riyal (Katar)
-SAR;de;RiYal;Riyal (Saudi Arabien)
-JPY;de;Yen;Japanische Yen
-CNY;de;Renminbi Yuan;Chinesische Renminbi Yuan
-SGD;de;Singapurischer Dollar;Singapurischer Dollar
-ZAR;de;Rand;Südafrikanische Rand
-EUR;fr;euro;de la Zone euro
-USD;fr;dollar;dollar des États-Unis
-CAD;fr;dollar canadien;dollar canadien
-AUD;fr;dollar australien;dollar australien
-GBP;fr;livre sterling;pound sterling
-ILS;fr;Shekel;shekel israelien
-INR;fr;Roupie;Roupie
-QAR;fr;Rial;Rial
-SAR;fr;Riyal;Riyal
-JPY;fr;Yen;Yen
-CNY;fr;yuan renminbi;yuan renminbi
-SGD;fr;Singapour Dollar;Singapour Dollar
-ZAR;fr;Rand;Rand
-EUR;en;euro;euro
-USD;en;dollar;US dollar
-CAD;en;canadien dollar;canadien dollar 
-AUD;en;australien dollar;australien dollar 
-GBP;en;pound sterling;pound sterling
-ILS;en;Shekel;shekel
-INR;en;Rupie;indian rupie
-QAR;en;Riyal;qatar riyal
-SAR;en;Riyal;saudi arabian Riyal
-JPY;en;Yen;japanese yen
-CNY;en;Yuan;chinese yuan
-SGD;en;Singapore dollar;Singapore dollar
-ZAR;en;Rand;south african rand
+ADP;en;Peseta;Andoran peseta
+AED;en;Dirham;United Arab Emirates Dirham
+AFA;en;Afghani;Afghani (Old)
+AFN;en;Afghani;Afghani
+ALL;en;Lek;Albanian Lek
+AMD;en;Dram;Armenian Dram
+ANG;en;W.Ind.Guilder;West Indian Guilder
+AOA;en;Kwansa;Angolanische Kwanza
+AON;en;New Kwanza;Angolan New Kwanza (Old)
+AOR;en;Kwanza Reajust.;Angolan Kwanza Reajustado (Old)
+ARS;en;Arg. Peso;Argentine Peso
+ATS;en;Shilling;Austrian Schilling
+AUD;en;Austr. Dollar;Australian Dollar
+AWG;en;Aruban Guilder;Aruban Guilder
+AZM;en;Manat;Azerbaijan Manat
+AZN;en;Manat;Azerbaijan New Manat
+BAM;en;Convert. Mark;Bosnia and Herzegovina Convertible Mark
+BBD;en;Dollar;Barbados Dollar
+BDT;en;Taka;Bangladesh Taka
+BEF;en;Belgian Franc;Belgian Franc
+BGN;en;Lev;Bulgarian Lev
+BHD;en;Dinar;Bahrain Dinar
+BIF;en;Burundi Franc;Burundi Franc
+BMD;en;Bermudan Dollar;Bermudan Dollar
+BND;en;Dollar;Brunei Dollar
+BOB;en;Boliviano;Boliviano
+BRL;en;Real;Brazilian Real
+BSD;en;Dollar;Bahaman Dollar
+BTN;en;Ngultrum;Bhutan Ngultrum
+BWP;en;Pula;Botswana Pula
+BYB;en;Beloruss.Ruble;Belorussian Ruble (Old)
+BYR;en;Ruble;Belorussian Ruble
+BZD;en;Dollar;Belize Dollar
+CAD;en;Canadian Dollar;Canadian Dollar
+CDF;en;test data;Congolese Franc
+XPF;en;Fr. Frank (Pac);French Franc (Pacific Islands)
+CHF;en;Swiss Franc;Swiss Franc
+CLP;en;Peso;Chilean Peso
+CNH;en;HK Renminbi;Hong Kong Chinese Renminbi
+CNY;en;Yuan;Chinesische Yuan (international)
+COP;en;Peso;Colombian Peso
+CRC;en;Cost.Rica Colon;Costa Rica Colon
+CSD;en;Serbian Dinar;Serbian Dinar
+CUP;en;Cuban Peso;Cuban Peso
+CVE;en;Escudo;Cape Verde Escudo
+CYP;en;Cyprus Pound;Cyprus Pound
+CZK;en;Krona;Czech Krona
+DEM;en;German Mark;German Mark
+DJF;en;Djibouti Franc;Djibouti Franc
+DKK;en;Danish Krone;Danish Krone
+DOP;en;Dominican Peso;Dominican Peso
+DZD;en;Dinar;Algerian Dinar
+ECS;en;Sucre;Ecuadorian Sucre (  > USD)
+EEK;en;Krona;Estonian Krone
+EGP;en;Pound;Egyptian Pound
+ERN;en;Nakfa;Eritrean Nafka
+ESP;en;Peseta;Spanish Peseta
+ETB;en;Birr;Ethiopian Birr
+EUR;en;Euro;European Euro
+FIM;en;Finnish markka;Finnish markka
+FJD;en;Dollar;Fiji Dollar
+FKP;en;Falkland Pound;Falkland Pound
+FRF;en;French Franc;French Franc
+GBP;en;Pound sterling;British Pound
+GEL;en;Lari;Georgian Lari
+GHC;en;Cedi;Ghanian Cedi
+GIP;en;Gibraltar Pound;Gibraltar Pound
+GMD;en;Dalasi;Gambian Dalasi
+GNF;en;Franc;Guinean Franc
+GRD;en;Drachma;Greek Drachma
+GTQ;en;Quetzal;Guatemalan Quetzal
+GWP;en;Guinea Peso;Guinea Peso
+GYD;en;Guyana Dollar;Guyana Dollar
+HKD;en;H.K.Dollar;Hong Kong Dollar
+HNL;en;Lempira;Honduran Lempira
+HRK;en;Kuna;Croatian Kuna
+HTG;en;Gourde;Haitian Gourde
+HUF;en;Forint;Hungarian Forint
+IDR;en;Rupiah;Indonesian Rupiah
+IEP;en;Irish Punt;Irish Punt
+ILS;en;Scheckel;Israeli Scheckel
+INR;en;Rupee;Indian Rupee
+IQD;en;Dinar;Iraqui Dinar
+IRR;en;Rial;Iranian Rial
+ISK;en;Krona;Iceland Krona
+ITL;en;Lire;Italian Lira
+JMD;en;Jamaican Dollar;Jamaican Dollar
+JOD;en;Jordanian Dinar;Jordanian Dinar
+JPY;en;Yen;Japanese Yen
+KES;en;Shilling;Kenyan Shilling
+KGS;en;Som;Kyrgyzstan Som
+KHR;en;Riel;Cambodian Riel
+KMF;en;Comoros Franc;Comoros Franc
+KPW;en;N. Korean Won;North Korean Won
+KRW;en;S.Korean Won;South Korean Won
+KWD;en;Dinar;Kuwaiti Dinar
+KYD;en;Cayman Dollar;Cayman Dollar
+KZT;en;Tenge;Kazakstanian Tenge
+LAK;en;Kip;Laotian Kip
+LBP;en;Lebanese Pound;Lebanese Pound
+LKR;en;Sri Lanka Rupee;Sri Lankan Rupee
+LRD;en;Liberian Dollar;Liberian Dollar
+LSL;en;Loti;Lesotho Loti
+LTL;en;Lita;Lithuanian Lita
+LUF;en;Lux. Franc;Luxembourg Franc
+LVL;en;Lat;Latvian Lat
+LYD;en;Libyan Dinar;Libyan Dinar
+MAD;en;Dirham;Moroccan Dirham
+MDL;en;Leu;Moldavian Leu
+MGA;en;Madagasc.Ariary;Madagascan Ariary (New)
+MGF;en;Madagascan Fr.;Madagascan Franc (Old
+MKD;en;Maced. Denar;Macedonian Denar
+MMK;en;Kyat;Myanmar Kyat
+MNT;en;Tugrik;Mongolian Tugrik
+MOP;en;Pataca;Macao Pataca
+MRO;en;Ouguiya;Mauritanian Ouguiya
+MTL;en;Lira;Maltese Lira
+MUR;en;Rupee;Mauritian Rupee
+MVR;en;Rufiyaa;Maldive Rufiyaa
+MWK;en;Malawi Kwacha;Malawi Kwacha
+MXN;en;Peso;Mexican Pesos
+MYR;en;Ringgit;Malaysian Ringgit
+MZM;en;Metical;Mozambique Metical
+NAD;en;Namibian Dollar;Namibian Dollar
+NGN;en;Naira;Nigerian Naira
+NIO;en;Cordoba Oro;Nicaraguan Cordoba Oro
+NLG;en;Guilder;Dutch Guilder
+NOK;en;Norwegian Krone;Norwegian Krone
+NPR;en;Rupee;Nepalese Rupee
+NZD;en;N.Zeal.Dollars;New Zealand Dollars
+OMR;en;Omani Rial;Omani Rial
+PAB;en;Balboa;Panamanian Balboa
+PEN;en;New Sol;Peruvian New Sol
+PGK;en;Kina;Papua New Guinea Kina
+PHP;en;Peso;Philippine Peso
+PKR;en;Rupee;Pakistani Rupee
+PLN;en;Zloty;Polish Zloty (new)
+PTE;en;Escudo;Portuguese Escudo
+PYG;en;Guarani;Paraguayan Guarani
+QAR;en;Rial;Qatar Rial
+ROL;en;Leu;Romanian Leu
+RON;en;Leu;Romanian Leu
+RSD;en;Serbian Dinar;Serbian Dinar
+RUB;en;Ruble;Russian Ruble
+RUE;en;ConvUnitsRussia;RUE Conventional Units Russia
+RWF;en;Franc;Rwandan Franc
+SAR;en;Rial;Saudi Riyal
+SBD;en;Sol.Isl.Dollar;Solomon Islands Dollar
+SCR;en;Rupee;Seychelles Rupee
+SDD;en;Dinar;Sudanese Dinar
+SDP;en;Pound;Sudanese Pound
+SEK;en;Swedish Krona;Swedish Krona
+SGD;en;Sing.Dollar;Singapore Dollar
+SHP;en;St.Helena Pound;St.Helena Pound
+SIT;en;Tolar;Slovenian Tolar
+SKK;en;Krona;Slovakian Krona
+SLL;en;Leone;Sierra Leone Leone
+SOS;en;Shilling;Somalian Shilling
+SRD;en;Surinam Doillar;Surinam Dollar
+SRG;en;Surinam Guilder;Surinam Guilder (Old)
+STD;en;Dobra;Sao Tome / Principe Dobra
+SVC;en;Colon;El Salvador Colon
+SYP;en;Syrian Pound;Syrian Pound
+SZL;en;Lilangeni;Swaziland Lilangeni
+THB;en;Baht;Thailand Baht
+TJR;en;Ruble;Tajikistani Ruble (Old)
+TJS;en;Somoni;Tajikistani Somoni
+TMM;en;Manat;Turkmenistani Manat
+TND;en;Dinar;Tunisian Dinar
+TOP;en;Pa'anga;Tongan Pa'anga
+TPE;en;Timor Escudo;Timor Escudo
+TRL;en;Lira (Old);Turkish Lira (Old)
+TRY;en;Lira;Turkish Lira
+TTD;en;T.+ T. Dollar;Trinidad and Tobago Dollar
+TWD;en;Dollar;New Taiwan Dollar
+TZS;en;Shilling;Tanzanian Shilling
+UAH;en;Hryvnia;Ukraine Hryvnia
+UGX;en;Shilling;Ugandan Shilling
+USD;en;US Dollar;United States Dollar
+UYU;en;Peso;Uruguayan Peso (new)
+UZS;en;Total;Uzbekistan Som
+VEB;en;Bolivar;Venezuelan Bolivar
+VEF;en;Bolivar Hard;Venezuelan Bolivar Hard
+VND;en;Dong;Vietnamese Dong
+VUV;en;Vatu;Vanuatu Vatu
+WST;en;Tala;Samoan Tala
+XAF;en;CFA Franc BEAC;Gabon CFA Franc BEAC
+XCD;en;Dollar;East Carribean Dollar
+XDR;en;IMF;Special Drawing Rights
+XEU;en;E.C.U.;European Currency Unit (E.C.U.)
+XOF;en;CFA Franc BCEAO;Benin CFA Franc BCEAO
+YER;en;Yemeni Ryal;Yemeni Ryal
+YUM;en;New Dinar;New Yugoslavian Dinar (Old)
