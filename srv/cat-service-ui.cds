@@ -16,7 +16,7 @@ annotate MroService.VendorList with @(UI : {
             $Type                 : 'UI.DataField',
             Value                 : manufacturerCodeDesc,
             ![@HTML5.CssDefaults] : {width : '8rem'},
-            ![@UI.Importance]     : #Low
+            ![@UI.Importance]     : #High
         },
         {
             $Type                 : 'UI.DataField',
@@ -27,7 +27,7 @@ annotate MroService.VendorList with @(UI : {
         {
             $Type             : 'UI.DataField',
             Value             : localManufacturerCodeDesc,
-            ![@UI.Importance] : #Low
+            ![@UI.Importance] : #High
         },
         {
             $Type                 : 'UI.DataField',
@@ -46,12 +46,6 @@ annotate MroService.VendorList with @(UI : {
             Criticality           : status.criticality,
             ![@HTML5.CssDefaults] : {width : '7rem'},
             ![@UI.Importance]     : #High
-        },
-        {
-            $Type                 : 'UI.DataField',
-            Value                 : initiator,
-            ![@HTML5.CssDefaults] : {width : '8rem'},
-            ![@UI.Importance]     : #Medium
         },
         {
             $Type                 : 'UI.DataField',
@@ -265,9 +259,10 @@ annotate MroService.VendorNotifications_U with @(UI : {LineItem : [
         ![@UI.Importance] : #Medium
     },
     {
-        $Type             : 'UI.DataField',
-        Value             : createdBy,
-        ![@UI.Importance] : #Medium
+        $Type                 : 'UI.DataField',
+        Value                 : createdBy,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #Medium
     },
     {
         $Type             : 'UI.DataField',
@@ -275,9 +270,10 @@ annotate MroService.VendorNotifications_U with @(UI : {LineItem : [
         ![@UI.Importance] : #Medium
     },
     {
-        $Type             : 'UI.DataField',
-        Value             : approver,
-        ![@UI.Importance] : #Medium
+        $Type                 : 'UI.DataField',
+        Value                 : approver,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #Medium
     }
 
 ]});
@@ -315,9 +311,10 @@ annotate MroService.VendorNotifications_A with @(UI : {LineItem : [
         ![@UI.Importance] : #Medium
     },
     {
-        $Type             : 'UI.DataField',
-        Value             : createdBy,
-        ![@UI.Importance] : #Medium
+        $Type                 : 'UI.DataField',
+        Value                 : createdBy,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #Medium
     },
     {
         $Type             : 'UI.DataField',
@@ -325,9 +322,10 @@ annotate MroService.VendorNotifications_A with @(UI : {LineItem : [
         ![@UI.Importance] : #Medium
     },
     {
-        $Type             : 'UI.DataField',
-        Value             : approver,
-        ![@UI.Importance] : #Medium
+        $Type                 : 'UI.DataField',
+        Value                 : approver,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #Medium
     }
 
 ]});

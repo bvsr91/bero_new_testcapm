@@ -7,7 +7,6 @@ annotate schema.Vendor_List {
     // countryDesc               @title           : '{i18n>countryDesc}'  @UI.HiddenFilter       : true  @UI.Hidden : true;
     localManufacturerCode     @title           : '{i18n>localManufacturerCode}'; // @Common.Text : localManufacturerCodeDesc;
     localManufacturerCodeDesc @title           : '{i18n>localManufacturerCodeDesc}';
-    initiator                 @title           : '{i18n>initiator}';
     approver                  @title           : '{i18n>approver}'  @UI.HiddenFilter     : true;
     status                    @title           : '{i18n>status}';
     uuid                      @UI.HiddenFilter : true;

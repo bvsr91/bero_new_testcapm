@@ -70,7 +70,6 @@ module.exports = async function () {
                     req.data.loApprover = "";
                 }
                 // req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
-                req.data.initiator = req.user.id.toUpperCase();
                 req.data.status_code = status;
                 req.data.initiator = req.user.id.toUpperCase();
                 req.data.uuid = cds.utils.uuid();
@@ -100,8 +99,17 @@ module.exports = async function () {
         try {
             result = await SELECT.from(User_Approve_Maintain).where({ userid: req.user.id.toUpperCase() });
             if (result.length > 0) {
+                var aVendList = await SELECT.from(Vendor_List).where(
+                    {
+                        manufacturerCode: req.data.manufacturerCode,
+                        countryCode_code: req.data.countryCode_code.toUpperCase(),
+                        status_code: !["Deleted"]
+                    }
+                );
+                if (aVendList.length > 0) {
+                    req.reject(400, "Record with same Manufacturer and Country are already existing in the table");
+                }
                 req.data.approver = result[0].managerid;
-                req.data.initiator = req.user.id.toUpperCase();
                 req.data.status_code = "Pending";
                 req.data.uuid = cds.utils.uuid();
                 req.data.createdBy = req.user.id.toUpperCase();
@@ -140,7 +148,7 @@ module.exports = async function () {
                 requestType: "New",
                 requestDetail: "Manufacturer- " + req.manufacturerCode + " & Local Manufacturer- " + req.localManufacturerCode
                     + " & Country- " + req.countryCode_code,
-                from_user: req.initiator,
+                from_user: req.createdBy,
                 recipients: [mailId],
                 priority: "High"
             });
@@ -194,7 +202,6 @@ module.exports = async function () {
 
     this.before("INSERT", "VendorComments", async (req, next) => {
         var logOnUser = req.user.id.toUpperCase();
-        // req.data.initiator = req.user.id.toUpperCase();
         req.data.uuid = cds.utils.uuid();
         req.data.createdBy = req.user.id.toUpperCase();
         req.data.modifiedBy = req.user.id.toUpperCase();
@@ -202,7 +209,6 @@ module.exports = async function () {
     });
     this.before("INSERT", "PricingComments", async (req, next) => {
         var logOnUser = req.user.id.toUpperCase();
-        // req.data.initiator = req.user.id.toUpperCase();
         req.data.uuid = cds.utils.uuid();
         req.data.createdBy = req.user.id.toUpperCase();
         req.data.modifiedBy = req.user.id.toUpperCase();
@@ -582,11 +588,9 @@ module.exports = async function () {
                     }
                 }
             }
-
         } catch (error) {
             req.reject(error);
         }
-
     });
 
     this.before("UPDATE", "PricingConditions", async (req, next) => {
@@ -788,18 +792,7 @@ module.exports = async function () {
             if (result.length > 0) {
                 managerid = result[0].managerid;
                 mailId = result[0].mail_id;
-                // var oManagerInfo = await SELECT.one(Users_Role_Assign).where({ userid: managerid });
             }
-
-            // await UPDATE(Vendor_List).with({
-            //     status_code: VendorList.status_code,
-            //     modifiedBy: req.user.id.toUpperCase()
-            // }).where(
-            //     {
-            //         manufacturerCode: VendorList.manufacturerCode,
-            //         countryCode_code: VendorList.countryCode_code
-            //     }
-            // );
             await UPDATE(Vendor_Notifications).with({
                 status_code: VendorList.status_code,
                 localManufacturerCode: VendorList.localManufacturerCode,
@@ -810,9 +803,8 @@ module.exports = async function () {
                     Vendor_List_countryCode_code: VendorList.countryCode_code
                 }
             );
-
             vendorNoti.mainPayload({
-                requestType: "New",
+                requestType: "Updated",
                 requestDetail: "Manufacturer- " + VendorList.manufacturerCode + " & Local Manufacturer- " + VendorList.localManufacturerCode
                     + " & Country- " + VendorList.countryCode_code,
                 from_user: req.user.id.toUpperCase(),

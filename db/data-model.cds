@@ -37,7 +37,6 @@ entity Vendor_List : managed {
         localManufacturerCode     : String(10);
         manufacturerCodeDesc      : String(35);
         localManufacturerCodeDesc : String(35);
-        initiator                 : String(10);
         approver                  : String(10);
         // status                    : String(10);
         status                    : Association to statusList;
@@ -150,13 +149,15 @@ view UserDetails as
 view VendorNotifications_U as
     select * from Vendor_Notifications
     where
-        upper(createdBy) = upper($user)
+            upper(createdBy) =  upper($user)
+        and status.code      != 'Deleted'
     order by
         modifiedAt desc;
 
 view VendorNotifications_A as
     select * from Vendor_Notifications
     where
-        upper(approver) = upper($user)
+            upper(approver) =  upper($user)
+        and status.code     != 'Deleted'
     order by
         modifiedAt desc;
