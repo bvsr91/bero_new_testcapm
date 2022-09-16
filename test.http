@@ -1,13 +1,8 @@
-PUT http://localhost:4004/v2/MroSrv/PricingConditions(manufacturerCode='1212',countryCode_code='IT')
+POST http://localhost:4004/v2/MroSrv/reopenVendor
 Content-Type: application/json;IEEE754Compatible=true
 
-{"manufacturerCodeDesc":"testing forward scenario",
-"ld_initiator":"PRIYAJANB1",
-"countryCode_code":"IT",
-"p_notif_uuid":"b6b8a2cc-6a60-4797-b998-2dbb568eb145",
-"countryFactor":2.2,"exchangeRate":4,
-"validityStart":"2022-09-16T00:00:00",
-"validityEnd":"2025-09-16T00:00:00",
-"lo_exchangeRate":true,
-"lo_countryFactor":false,
-"localCurrency_code":"EUR"}
+{
+    "notif_uuid":"c068ad6b-8551-415b-8748-93a4544ec4c8",
+    "manufacturerCode":"12345A",
+    "countryCode_code":"IT"
+}

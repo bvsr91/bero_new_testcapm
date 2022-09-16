@@ -107,7 +107,7 @@ module.exports = async function () {
                     }
                 );
                 if (aVendList.length > 0) {
-                    req.reject(400, "Record with same Manufacturer and Country are already existing in the table");
+                    req.error(400, "Record with same Manufacturer and Country are already existing in the table");
                 }
                 req.data.approver = result[0].managerid;
                 req.data.status_code = "Pending";
@@ -124,7 +124,6 @@ module.exports = async function () {
                     req.data.v_notif.createdBy = req.user.id.toUpperCase();
                     req.data.v_notif.modifiedBy = req.user.id.toUpperCase();
                 }
-
                 return req;
             } else {
                 req.error(400, "Manager not assigned", "Please assign manager to the user " + req.user.id.toUpperCase());
@@ -143,7 +142,6 @@ module.exports = async function () {
                 mailId = result[0].mail_id;
                 // var oManagerInfo = await SELECT.one(Users_Role_Assign).where({ userid: managerid });
             }
-
             vendorNoti.mainPayload({
                 requestType: "New",
                 requestDetail: "Manufacturer- " + req.manufacturerCode + " & Local Manufacturer- " + req.localManufacturerCode
@@ -239,7 +237,6 @@ module.exports = async function () {
                     req.reject(400, "No Local Delivery teams available for the country: " + oPricingCond.countryCode_code);
                 }
             }
-
             req.data.status_code = status !== "" ? status : req.data.status_code;
             if (status !== "") {
                 req.data.approver = "";
@@ -569,24 +566,51 @@ module.exports = async function () {
         }
         return PricingComments;
     });
-    this.on("batchCreateVendor", async (req, next) => {
+    this.on("reopenVendor", async (req, next) => {
         var oPayLoad = await next();
         try {
-            if (req.data.aData) {
-                for (var a of req.data.aData) {
-                    try {
-                        var oVend = await SELECT.one(Vendor_List).where({
-                            manufacturerCode: a.manufacturerCode,
-                            // localManufacturerCode: a.localManufacturerCode,
-                            countryCode_code: a.countryCode_code
-                        });
-                        if (oVend === null) {
-                            var aData = await INSERT.into(Vendor_List).entries(a);
+            var sUser = req.user.id.toUpperCase();
+            var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
+            if (oUser && (oUser.role_role === "GCM" || oUser.role_role === "SGC")) {
+                var oVend = await SELECT.one(Vendor_List).where({
+                    manufacturerCode: req.data.manufacturerCode,
+                    countryCode_code: req.data.countryCode_code,
+                    status_code: "Approved"
+                });
+                if (oVend && oVend.approver === sUser) {
+                    var result = await UPDATE(Vendor_Notifications).with({
+                        status_code: "Pending",
+                        modifiedBy: req.user.id.toUpperCase()
+                    }).where({
+                        uuid: req.data.notif_uuid
+                    });
+                    if (result === 1) {
+                        var result = await UPDATE(Vendor_List).with({
+                            status_code: "Pending",
+                            modifiedBy: req.user.id.toUpperCase()
+                        }).where(
+                            {
+                                manufacturerCode: req.data.manufacturerCode,
+                                countryCode_code: req.data.countryCode_code
+                            }
+                        );
+                        var oMail = await SELECT.one(UserDetails).where({ userid: oVend.createdBy });
+                        if (oMail && oMail.mail_id !== "") {
+                            vendorNoti.mainPayload({
+                                requestType: "Reopen Request",
+                                requestDetail: "Manufacturer- " + req.data.manufacturerCode + " & Local Manufacturer- " + oVend.localManufacturerCode
+                                    + " & Country- " + req.data.countryCode_code,
+                                from_user: sUser,
+                                recipients: [oMail.mail_id],
+                                priority: "Medium"
+                            });
                         }
-                    } catch (error) {
-                        req.reject(error);
                     }
+                } else {
+                    req.reject(400, "You are not authorized to reopen the request");
                 }
+            } else {
+                req.reject(400, "You are not authorized to reopen the request");
             }
         } catch (error) {
             req.reject(error);
