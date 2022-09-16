@@ -178,7 +178,6 @@ module.exports = async function () {
                     mailId = result[0].mail_id;
                     // var oManagerInfo = await SELECT.one(Users_Role_Assign).where({ userid: managerid });
                 }
-
                 createNoti.mainPayload({
                     requestType: "New",
                     requestDetail: "Manufacturer- " + req.manufacturerCode + " & Country- " + req.countryCode_code,
@@ -213,6 +212,7 @@ module.exports = async function () {
     this.before("UPDATE", "PricingNotifications", async (req, next) => {
         try {
             PricingNotifications = req.data;
+            req.data.modifiedBy = req.user.id.toUpperCase();
             var status = "";
             oPricingCond = await SELECT.one(Pricing_Conditions).where(
                 {
@@ -284,7 +284,8 @@ module.exports = async function () {
                     //     }
                     // );
                     await UPDATE(Pricing_Conditions).with({
-                        status_code: status
+                        status_code: status,
+                        modifiedBy: req.user.id.toUpperCase()
                     }).where(
                         {
                             manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
@@ -303,7 +304,8 @@ module.exports = async function () {
                 }
 
                 await UPDATE(Pricing_Conditions).with({
-                    status_code: PricingNotifications.status_code
+                    status_code: PricingNotifications.status_code,
+                    modifiedBy: req.user.id.toUpperCase()
                 }).where(
                     {
                         manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
@@ -516,7 +518,11 @@ module.exports = async function () {
                     countryCode_code: PricingComments.Pricing_Conditions_countryCode_code
                 }
             );
-            oResult = await SELECT.one(UserDetails).where({ userid: oPricingCond.createdBy });
+            if (oPricingCond.ld_initiator !== null) {
+                oResult = await SELECT.one(UserDetails).where({ userid: oPricingCond.ld_initiator });
+            } else {
+                oResult = await SELECT.one(UserDetails).where({ userid: oPricingCond.createdBy });
+            }
             var mailId, managerid;
             if (oResult) {
                 mailId = oResult.mail_id;
@@ -608,25 +614,22 @@ module.exports = async function () {
                         }
                     } else {
                         req.data.status_code = "Pending";
-                        oResult = await SELECT.one(UserDetails).where({ userid: sUser });
                         var mailId, managerid;
-                        if (oResult) {
-                            // mailId = oResult.mail_id;
+                        if (oUser) {
                             var oManager = await SELECT.one(UserDetails).where({
-                                userid: oResult.managerid
+                                userid: oUser.managerid
                             });
-                            if (oManager) {
-                                mailId = oManager.mail_id;
-                            } else {
+                            if (!oManager) {
                                 req.error(400, "No manager assigned to the user");
                             }
                             if (oUser.role_role === "LDT" || oUser.role_role === "SLP") {
                                 req.data.localApprover = oUser.managerid;
+                            } else {
+                                req.data.approver = oManager.userid;
                             }
                         } else {
                             req.error(400, "No manager assigned to the user");
                         }
-                        req.data.approver = oManager.userid;
                     }
                 }
             }
@@ -707,7 +710,6 @@ module.exports = async function () {
                             uuid: oPricingConditions.p_notif_uuid
                         }
                     );
-
                     createNoti.mainPayload({
                         requestType: "Updated",
                         requestDetail: "Manufacturer- " + oPricingConditions.manufacturerCode + " & Country- " + oPricingConditions.countryCode_code,

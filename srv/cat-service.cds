@@ -53,11 +53,11 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
 
     @readonly
     entity VendorNotifications_A  as projection on my.VendorNotifications_A order by
-        modifiedAt;
+        modifiedAt desc;
 
     @readonly
     entity VendorNotifications_U  as projection on my.VendorNotifications_U order by
-        modifiedAt;
+        modifiedAt desc;
 
     @readonly
     entity PricingNotifications_U as
@@ -77,6 +77,16 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
         order by
             modifiedAt desc;
 
+    @readonly
+    entity PricingNotifications_S as
+        select * from my.Pricing_Notifications
+        where
+               upper(approver)   =  upper($user)
+            or upper(createdBy)  =  upper($user)
+            or upper(modifiedBy) =  upper($user)
+            or status.code       in ('Forwarded')
+        order by
+            modifiedAt desc;
 
     view Status_Vendor as
         select * from my.statusList
