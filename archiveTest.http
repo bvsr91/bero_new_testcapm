@@ -11,6 +11,16 @@ Content-Type: application/json;IEEE754Compatible=true
     "status_code":"Approved"
 }
 
+### actions
+POST http://localhost:4004/v2/MroSrv/reopenVendor
+Content-Type: application/json;IEEE754Compatible=true
+
+{
+    "notif_uuid":"c068ad6b-8551-415b-8748-93a4544ec4c8",
+    "manufacturerCode":"12345A",
+    "countryCode_code":"IT"
+}
+
 
 
 ### update functionality testing

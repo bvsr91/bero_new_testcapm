@@ -1,8 +1,16 @@
-POST http://localhost:4004/v2/MroSrv/reopenVendor
+POST http://localhost:4004/v2/MroSrv/PricingConditions
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-    "notif_uuid":"c068ad6b-8551-415b-8748-93a4544ec4c8",
-    "manufacturerCode":"12345A",
-    "countryCode_code":"IT"
+"countryCode_code": "IN",
+"countryFactor": null,
+"exchangeRate": null,
+"lo_countryFactor": false,
+"lo_exchangeRate": false,
+"localCurrency_code": "INR",
+"manufacturerCode": "10003",
+"manufacturerCodeDesc": "Test",
+"p_notif": {},
+"validityEnd": "2022-09-30T00:00:00",
+"validityStart": null
 }

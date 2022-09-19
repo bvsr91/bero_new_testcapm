@@ -44,6 +44,10 @@ module.exports = async function () {
             //         status = "Forwarded";
             //     }
             // }
+            var sErrorMsg = await validatePricing(req.data);
+            if (sErrorMsg !== "") {
+                req.error(400, sErrorMsg);
+            }
 
             if (req.data.lo_exchangeRate === true && req.data.lo_countryFactor === true) {
                 status = "Forwarded";
@@ -860,5 +864,47 @@ module.exports = async function () {
     //         req.reject(400, err);
     //     }
     // });
+
+    async function validatePricing(oReq) {
+        var bFinalValidation = true, sFinalMsg = "";
+        if (!oReq.lo_exchangeRate) {
+            if ((oReq.exchangeRate === null || oReq.exchangeRate === "") || (oReq.localCurrency_code === "" || oReq.localCurrency_code === null)) {
+                bFinalValidation = false;
+                sFinalMsg = prepareErrorMsg(sFinalMsg, "Exchange Rate and Local Currency are mandatory when Local Ownership for ExchangeRate is not checked");
+            }
+        }
+        if (!oReq.lo_countryFactor) {
+            if (oReq.countryFactor === "" || oReq.countryFactor === null) {
+                bFinalValidation = false;
+                sFinalMsg = prepareErrorMsg(sFinalMsg, "Country Factor is mandatory when Local Ownership for Country Factor is not checked");
+            }
+        }
+        var bValidEndDate = validateStartEndDate(oReq.validityStart, oReq.validityEnd);
+        if (!bValidEndDate) {
+            bFinalValidation = false;
+            sFinalMsg = prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+        }
+        return sFinalMsg;
+    }
+    function prepareErrorMsg(sFinalMsg, sMsg) {
+        if (sFinalMsg !== "") {
+            sFinalMsg = sFinalMsg + ", " + sMsg;
+        } else {
+            sFinalMsg = sMsg;
+        }
+        return sFinalMsg;
+    }
+
+    function validateStartEndDate(startDate, endDate) {
+        if ((startDate || startDate !== null) || (endDate || endDate !== null)) {
+            if (new Date(endDate) > new Date(startDate)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
 
 }
