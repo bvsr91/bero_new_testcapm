@@ -235,11 +235,23 @@ annotate MroService.VendorNotifications_U with @(UI : {LineItem : [
         Label             : 'Manufacturer'
     },
     {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
         $Type             : 'UI.DataField',
         // Value             : Vendor_List_localManufacturerCode,
         Value             : localManufacturerCode,
         ![@UI.Importance] : #High,
         Label             : 'Local Manufacturer'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localManufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
     },
     {
         $Type             : 'UI.DataField',
@@ -287,11 +299,23 @@ annotate MroService.VendorNotifications_A with @(UI : {LineItem : [
         Label             : 'Manufacturer'
     },
     {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
         $Type             : 'UI.DataField',
         // Value             : Vendor_List_localManufacturerCode,
         Value             : localManufacturerCode,
         ![@UI.Importance] : #High,
         Label             : 'Local Manufacturer'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localManufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
     },
     {
         $Type             : 'UI.DataField',
@@ -388,6 +412,12 @@ annotate MroService.PricingNotifications_U with @(UI : {LineItem : [
     },
     {
         $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
+        $Type                 : 'UI.DataField',
         Value                 : Pricing_Conditions_countryCode_code,
         ![@UI.Importance]     : #High,
         ![@HTML5.CssDefaults] : {width : '10rem'},
@@ -408,6 +438,11 @@ annotate MroService.PricingNotifications_U with @(UI : {LineItem : [
     {
         $Type             : 'UI.DataField',
         Value             : completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : local_completionDate,
         ![@UI.Importance] : #Medium
     },
     {
@@ -441,6 +476,12 @@ annotate MroService.PricingNotifications_A with @(UI : {LineItem : [
     },
     {
         $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
+        $Type                 : 'UI.DataField',
         Value                 : Pricing_Conditions_countryCode_code,
         ![@UI.Importance]     : #High,
         ![@HTML5.CssDefaults] : {width : '10rem'},
@@ -461,6 +502,11 @@ annotate MroService.PricingNotifications_A with @(UI : {LineItem : [
     {
         $Type             : 'UI.DataField',
         Value             : completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : local_completionDate,
         ![@UI.Importance] : #Medium
     },
     {

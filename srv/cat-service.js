@@ -81,6 +81,7 @@ module.exports = async function () {
                 if (req.data.p_notif) {
                     req.data.p_notif.Pricing_Conditions_manufacturerCode = req.data.manufacturerCode;
                     req.data.p_notif.Pricing_Conditions_countryCode_code = req.data.countryCode_code;
+                    req.data.p_notif.manufacturerCodeDesc = req.data.manufacturerCodeDesc;
                     req.data.p_notif.approver = sApprover;
                     req.data.p_notif.user = req.user.id.toUpperCase();
                     req.data.p_notif.status_code = status;
@@ -107,7 +108,7 @@ module.exports = async function () {
                     {
                         manufacturerCode: req.data.manufacturerCode,
                         countryCode_code: req.data.countryCode_code.toUpperCase(),
-                        status_code: !["Deleted"]
+                        status_code: ['Pending', 'Forwarded', 'Approved', 'Rejected', 'In Progress']
                     }
                 );
                 if (aVendList.length > 0) {
@@ -122,6 +123,8 @@ module.exports = async function () {
                 if (req.data.v_notif) {
                     req.data.v_notif.Vendor_List_manufacturerCode = req.data.manufacturerCode;
                     req.data.v_notif.localManufacturerCode = req.data.localManufacturerCode;
+                    req.data.v_notif.manufacturerCodeDesc = req.data.manufacturerCodeDesc;
+                    req.data.v_notif.localManufacturerCodeDesc = req.data.localManufacturerCodeDesc;
                     req.data.v_notif.Vendor_List_countryCode_code = req.data.countryCode_code;
                     req.data.v_notif.approver = result[0].managerid;
                     req.data.v_notif.status_code = "Pending";
@@ -281,15 +284,7 @@ module.exports = async function () {
                         recipients: aMails,
                         priority: "High"
                     });
-                    // await UPDATE(Pricing_Notifications).with({
-                    //     status_code: status,
-                    //     approver: "",
-                    //     modifiedBy: req.user.id.toUpperCase()
-                    // }).where(
-                    //     {
-                    //         uuid: oPricingCond.p_notif_uuid
-                    //     }
-                    // );
+
                     await UPDATE(Pricing_Conditions).with({
                         status_code: status,
                         modifiedBy: req.user.id.toUpperCase()
@@ -379,55 +374,6 @@ module.exports = async function () {
             req.reject(400, err);
         }
         return VendorNotifications;
-    });
-
-    this.on("approvePricing", async req => {
-        try {
-            var returnValue = "0";
-            var result = await UPDATE(Pricing_Notifications).with({
-                status_code: "Approved",
-                approvedDate: new Date().toISOString(),
-                completionDate: new Date().toISOString(),
-                approver: req.user.id.toUpperCase(),
-                modifiedBy: req.user.id.toUpperCase()
-            }).where({
-                uuid: req.data.uuid
-            });
-            if (result === 1) {
-                var result = await UPDATE(Pricing_Conditions).with({
-                    status_code: "Approved",
-                    exchangeRate: 3.3
-                }).where(
-                    {
-                        manufacturerCode: req.data.manufacturerCode,
-                        countryCode_code: req.data.countryCode_code
-                    }
-                );
-                if (result === 0) {
-                    await UPDATE(Pricing_Conditions).with({
-                        status_code: "Approved",
-                        exchangeRate: 3.3
-                    }).where(
-                        {
-                            manufacturerCode: req.data.manufacturerCode,
-                            countryCode_code: req.data.countryCode_code
-                        }
-                    );
-                }
-            }
-            createNoti.mainPayload({
-                manufacturerCode: "Manufacturer Code: " + req.data.manufacturerCode,
-                countryCode_code: "Country Code: " + req.data.countryCode_code,
-                from_mail: req.user.id.toUpperCase(),
-                recipients: ["SrinivasaReddy.BUTUKURI@guest.ferrero.com", "Divya.EMURI@guest.ferrero.com",
-                    "butuksrin1@ferrero.com"],
-                priority: "Low"
-            });
-            // }
-            return 0;
-        } catch (err) {
-            req.reject(400, err);
-        }
     });
 
     this.on("acceptPricingCond", async (req, next) => {
@@ -535,17 +481,32 @@ module.exports = async function () {
                 mailId = oResult.mail_id;
             }
 
-            await UPDATE(Pricing_Notifications).with({
-                status_code: "Rejected",
-                approver: req.user.id.toUpperCase(),
-                approvedDate: new Date().toISOString(),
-                completionDate: new Date().toISOString(),
-                modifiedBy: req.user.id.toUpperCase()
-            }).where(
-                {
-                    uuid: PricingComments.pricing_Notif_uuid
-                }
-            );
+            if (oResult.role_role === "GCM" || oResult.role_role === "SGC") {
+                await UPDATE(Pricing_Notifications).with({
+                    status_code: "Rejected",
+                    approver: req.user.id.toUpperCase(),
+                    approvedDate: new Date().toISOString(),
+                    completionDate: new Date().toISOString(),
+                    modifiedBy: req.user.id.toUpperCase()
+                }).where(
+                    {
+                        uuid: PricingComments.pricing_Notif_uuid
+                    }
+                );
+            } else if (oResult.role_role === "LP" || oResult.role_role === "SLP") {
+                await UPDATE(Pricing_Notifications).with({
+                    status_code: "Rejected",
+                    approver: req.user.id.toUpperCase(),
+                    approvedDate: new Date().toISOString(),
+                    local_completionDate: new Date().toISOString(),
+                    modifiedBy: req.user.id.toUpperCase()
+                }).where(
+                    {
+                        uuid: PricingComments.pricing_Notif_uuid
+                    }
+                );
+            }
+
             await UPDATE(Pricing_Conditions).with({
                 status_code: "Rejected",
                 modifiedBy: req.user.id.toUpperCase()
@@ -700,6 +661,7 @@ module.exports = async function () {
                             });
                             await UPDATE(Pricing_Notifications).with({
                                 status_code: status,
+                                manufacturerCodeDesc: oPricingConditions.manufacturerCodeDesc,
                                 approver: "",
                                 modifiedBy: req.user.id.toUpperCase()
                             }).where(
@@ -736,6 +698,7 @@ module.exports = async function () {
                     await UPDATE(Pricing_Notifications).with({
                         status_code: status,
                         approver: oResult.managerid,
+                        manufacturerCodeDesc: oPricingConditions.manufacturerCodeDesc,
                         modifiedBy: req.user.id.toUpperCase()
                     }).where(
                         {
@@ -824,6 +787,7 @@ module.exports = async function () {
             await UPDATE(Vendor_Notifications).with({
                 status_code: VendorList.status_code,
                 localManufacturerCode: VendorList.localManufacturerCode,
+                localManufacturerCodeDesc: VendorList.localManufacturerCodeDesc,
                 modifiedBy: req.user.id.toUpperCase()
             }).where(
                 {

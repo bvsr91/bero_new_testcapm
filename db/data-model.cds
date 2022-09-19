@@ -116,23 +116,27 @@ entity Pricing_Comments : managed {
 }
 
 entity Pricing_Notifications : managed {
-    key uuid               : UUID;
-        approvedDate       : Timestamp;
-        approver           : String;
-        user               : String;
-        status             : Association to statusList;
-        completionDate     : Timestamp;
-        Pricing_Conditions : Association to Pricing_Conditions;
+    key uuid                 : UUID;
+        manufacturerCodeDesc : String(35);
+        approvedDate         : Timestamp;
+        approver             : String;
+        user                 : String;
+        status               : Association to statusList;
+        completionDate       : Timestamp;
+        local_completionDate : Timestamp;
+        Pricing_Conditions   : Association to Pricing_Conditions;
 }
 
 entity Vendor_Notifications : managed {
-    key uuid                  : UUID;
-        approvedDate          : Timestamp;
-        approver              : String;
-        completionDate        : Timestamp;
-        localManufacturerCode : String(10);
-        status                : Association to statusList;
-        Vendor_List           : Association to Vendor_List;
+    key uuid                      : UUID;
+        manufacturerCodeDesc      : String(35);
+        localManufacturerCodeDesc : String(35);
+        approvedDate              : Timestamp;
+        approver                  : String;
+        completionDate            : Timestamp;
+        localManufacturerCode     : String(10);
+        status                    : Association to statusList;
+        Vendor_List               : Association to Vendor_List;
 }
 
 view UserDetails as

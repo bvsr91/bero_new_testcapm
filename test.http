@@ -1,16 +1,11 @@
-POST http://localhost:4004/v2/MroSrv/PricingConditions
+POST http://localhost:4004/v2/MroSrv/VendorList
 Content-Type: application/json;IEEE754Compatible=true
 
 {
 "countryCode_code": "IN",
-"countryFactor": null,
-"exchangeRate": null,
-"lo_countryFactor": false,
-"lo_exchangeRate": false,
-"localCurrency_code": "INR",
 "manufacturerCode": "10003",
+"localManufacturerCode": "4555",
+"localManufacturerCodeDesc": "Test",
 "manufacturerCodeDesc": "Test",
-"p_notif": {},
-"validityEnd": "2022-09-30T00:00:00",
-"validityStart": null
+"v_notif": {}
 }
