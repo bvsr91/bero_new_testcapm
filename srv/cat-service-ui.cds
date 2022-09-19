@@ -96,6 +96,12 @@ annotate MroService.PricingConditions with @(UI : {
         },
         {
             $Type                 : 'UI.DataField',
+            Value                 : manufacturerCodeDesc,
+            ![@HTML5.CssDefaults] : {width : '8rem'},
+            ![@UI.Importance]     : #High
+        },
+        {
+            $Type                 : 'UI.DataField',
             Value                 : countryCode_code,
             ![@HTML5.CssDefaults] : {width : '10rem'},
             ![@UI.Importance]     : #High
@@ -143,11 +149,6 @@ annotate MroService.PricingConditions with @(UI : {
             Criticality           : status.criticality,
             ![@UI.Importance]     : #High
         },
-        {
-            $Type             : 'UI.DataField',
-            Value             : manufacturerCodeDesc,
-            ![@UI.Importance] : #Low
-        },
         // {
         //     $Type             : 'UI.DataField',
         //     Value             : countryDesc,
@@ -167,10 +168,16 @@ annotate MroService.PricingConditions with @(UI : {
         },
         {
             $Type                 : 'UI.DataField',
-            Value                 : initiator,
+            Value                 : createdBy,
             ![@HTML5.CssDefaults] : {width : '8rem'},
             ![@UI.Importance]     : #Medium
         },
+        // {
+        //     $Type                 : 'UI.DataField',
+        //     Value                 : initiator,
+        //     ![@HTML5.CssDefaults] : {width : '8rem'},
+        //     ![@UI.Importance]     : #Medium
+        // },
         {
             $Type                 : 'UI.DataField',
             Value                 : ld_initiator,
@@ -193,12 +200,6 @@ annotate MroService.PricingConditions with @(UI : {
             $Type             : 'UI.DataField',
             Value             : createdAt,
             ![@UI.Importance] : #Low
-        },
-        {
-            $Type                 : 'UI.DataField',
-            Value                 : createdBy,
-            ![@HTML5.CssDefaults] : {width : '8rem'},
-            ![@UI.Importance]     : #Low
         },
         {
             $Type             : 'UI.DataField',

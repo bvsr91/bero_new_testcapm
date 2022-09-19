@@ -71,7 +71,7 @@ module.exports = async function () {
                 }
                 // req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
                 req.data.status_code = status;
-                req.data.initiator = req.user.id.toUpperCase();
+                // req.data.initiator = req.user.id.toUpperCase();
                 req.data.uuid = cds.utils.uuid();
 
                 if (req.data.p_notif) {
@@ -169,7 +169,7 @@ module.exports = async function () {
                     createNoti.mainPayload({
                         requestType: "New",
                         requestDetail: "Manufacturer- " + req.manufacturerCode + " & Country- " + req.countryCode_code,
-                        from_user: req.initiator,
+                        from_user: req.createdBy,
                         recipients: aMails,
                         priority: "High"
                     });
@@ -187,7 +187,7 @@ module.exports = async function () {
                 createNoti.mainPayload({
                     requestType: "New",
                     requestDetail: "Manufacturer- " + req.manufacturerCode + " & Country- " + req.countryCode_code,
-                    from_user: req.initiator,
+                    from_user: req.createdBy,
                     recipients: [mailId],
                     priority: "High"
                 });
