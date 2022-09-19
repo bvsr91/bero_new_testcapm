@@ -1,11 +1,9 @@
-POST http://localhost:4004/v2/MroSrv/VendorList
+POST http://localhost:4004/v2/MroSrv/PricingComments
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-"countryCode_code": "IN",
-"manufacturerCode": "10003",
-"localManufacturerCode": "4555",
-"localManufacturerCodeDesc": "Test",
-"manufacturerCodeDesc": "Test",
-"v_notif": {}
+"Comment": "rejecting again for trial",
+"Pricing_Conditions_countryCode_code": "IT",
+"Pricing_Conditions_manufacturerCode": "100334",
+"pricing_Notif_uuid": "1831cb2f-61bf-426d-b74c-74173bd283ab"
 }

@@ -247,7 +247,7 @@ module.exports = async function () {
             req.data.status_code = status !== "" ? status : req.data.status_code;
             if (status !== "") {
                 req.data.approver = "";
-                req.data.completionDate = null;
+                // req.data.completionDate = null;
             }
         } catch (err) {
             req.reject(400, err);
@@ -463,8 +463,9 @@ module.exports = async function () {
     this.on("INSERT", "PricingComments", async (req, next) => {
         var PricingComments = await next();
         try {
-            req.data.createdBy = req.user.id.toUpperCase();
-            req.data.modifiedBy = req.user.id.toUpperCase();
+            var sUser = req.user.id.toUpperCase();
+            req.data.createdBy = sUser;
+            req.data.modifiedBy = sUser;
             oPricingCond = await SELECT.one(Pricing_Conditions).where(
                 {
                     manufacturerCode: PricingComments.Pricing_Conditions_manufacturerCode,
@@ -480,26 +481,26 @@ module.exports = async function () {
             if (oResult) {
                 mailId = oResult.mail_id;
             }
-
-            if (oResult.role_role === "GCM" || oResult.role_role === "SGC") {
+            var oCurrentUser = await SELECT.one(UserDetails).where({ userid: sUser });
+            if (oCurrentUser.role_role === "GCM" || oCurrentUser.role_role === "SGC") {
                 await UPDATE(Pricing_Notifications).with({
                     status_code: "Rejected",
-                    approver: req.user.id.toUpperCase(),
+                    approver: sUser,
                     approvedDate: new Date().toISOString(),
                     completionDate: new Date().toISOString(),
-                    modifiedBy: req.user.id.toUpperCase()
+                    modifiedBy: sUser
                 }).where(
                     {
                         uuid: PricingComments.pricing_Notif_uuid
                     }
                 );
-            } else if (oResult.role_role === "LP" || oResult.role_role === "SLP") {
+            } else if (oCurrentUser.role_role === "LP" || oCurrentUser.role_role === "SLP") {
                 await UPDATE(Pricing_Notifications).with({
                     status_code: "Rejected",
-                    approver: req.user.id.toUpperCase(),
+                    approver: sUser,
                     approvedDate: new Date().toISOString(),
                     local_completionDate: new Date().toISOString(),
-                    modifiedBy: req.user.id.toUpperCase()
+                    modifiedBy: sUser
                 }).where(
                     {
                         uuid: PricingComments.pricing_Notif_uuid
@@ -509,7 +510,7 @@ module.exports = async function () {
 
             await UPDATE(Pricing_Conditions).with({
                 status_code: "Rejected",
-                modifiedBy: req.user.id.toUpperCase()
+                modifiedBy: sUser
             }).where(
                 {
                     manufacturerCode: PricingComments.Pricing_Conditions_manufacturerCode,
@@ -520,7 +521,7 @@ module.exports = async function () {
             createNoti.mainPayload({
                 requestType: "Rejected",
                 requestDetail: "Manufacturer- " + PricingComments.Pricing_Conditions_manufacturerCode + " & Country- " + PricingComments.Pricing_Conditions_countryCode_code,
-                from_user: req.user.id.toUpperCase(),
+                from_user: sUser,
                 recipients: [mailId],
                 priority: "High"
             });
@@ -624,6 +625,10 @@ module.exports = async function () {
                             req.error(400, "No manager assigned to the user");
                         }
                     }
+                }
+            } else {
+                if (oUser.role_role === "LDT" || oUser.role_role === "SLP") {
+                    req.error(400, "Local Team is not authorized to Delete the request");
                 }
             }
         } catch (error) {

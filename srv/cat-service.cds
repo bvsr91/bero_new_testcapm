@@ -73,7 +73,8 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     entity PricingNotifications_A as
         select * from my.Pricing_Notifications
         where
-            upper(approver) = upper($user)
+                upper(approver) =  upper($user)
+            and status.code     != 'Deleted'
         order by
             modifiedAt desc;
 
