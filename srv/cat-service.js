@@ -124,6 +124,7 @@ module.exports = async function () {
                     req.data.v_notif.Vendor_List_manufacturerCode = req.data.manufacturerCode;
                     req.data.v_notif.localManufacturerCode = req.data.localManufacturerCode;
                     req.data.v_notif.manufacturerCodeDesc = req.data.manufacturerCodeDesc;
+                    req.data.v_notif.Vendor_List_uuid = req.data.uuid;
                     req.data.v_notif.localManufacturerCodeDesc = req.data.localManufacturerCodeDesc;
                     req.data.v_notif.Vendor_List_countryCode_code = req.data.countryCode_code;
                     req.data.v_notif.approver = result[0].managerid;
@@ -336,6 +337,7 @@ module.exports = async function () {
                 {
                     manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
                     // localManufacturerCode: VendorNotifications.localManufacturerCode,
+                    uuid: VendorNotifications.Vendor_List_uuid,
                     countryCode_code: VendorNotifications.Vendor_List_countryCode_code
                 }
             );
@@ -357,6 +359,7 @@ module.exports = async function () {
                 {
                     manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
                     // localManufacturerCode: VendorNotifications.localManufacturerCode,
+                    uuid: VendorNotifications.Vendor_List_uuid,
                     countryCode_code: VendorNotifications.Vendor_List_countryCode_code
                 }
             );
@@ -415,6 +418,7 @@ module.exports = async function () {
             oVendList = await SELECT.one(Vendor_List).where(
                 {
                     manufacturerCode: VendorComments.Vendor_List_manufacturerCode,
+                    uuid: VendorComments.Vendor_List_uuid,
                     // localManufacturerCode: VendorComments.localManufacturerCode,
                     countryCode_code: VendorComments.Vendor_List_countryCode_code
                 }
@@ -443,6 +447,7 @@ module.exports = async function () {
                 {
                     manufacturerCode: VendorComments.Vendor_List_manufacturerCode,
                     // localManufacturerCode: VendorComments.localManufacturerCode,
+                    uuid: VendorComments.Vendor_List_uuid,
                     countryCode_code: VendorComments.Vendor_List_countryCode_code
                 }
             );
@@ -797,6 +802,7 @@ module.exports = async function () {
             }).where(
                 {
                     Vendor_List_manufacturerCode: VendorList.manufacturerCode,
+                    Vendor_List_uuid: VendorList.uuid,
                     Vendor_List_countryCode_code: VendorList.countryCode_code
                 }
             );

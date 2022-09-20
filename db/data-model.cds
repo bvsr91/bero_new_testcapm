@@ -33,7 +33,7 @@ entity Vendor_List : managed {
     key countryCode               : Association to countriesCodeList
                                                                     @description     : 'Country'
                                                                     @Common          : {Text : 'countryCode.desc'};
-        uuid                      : UUID                            @UI.HiddenFilter : true;
+    key uuid                      : UUID                            @UI.HiddenFilter : true;
         localManufacturerCode     : String(10);
         manufacturerCodeDesc      : String(35);
         localManufacturerCodeDesc : String(35);
