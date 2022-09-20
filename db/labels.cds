@@ -73,7 +73,7 @@ annotate schema.Pricing_Notifications {
     manufacturerCodeDesc                @title           : '{i18n>manufacturerCodeDesc}';
     createdAt                           @title           : '{i18n>createdAt}'  @UI.HiddenFilter                           : true;
     createdBy                           @title           : '{i18n>createdBy}'  @UI.HiddenFilter                           : true;
-    completionDate                      @title           : '{i18n>completionDate}'  @UI.HiddenFilter                      : true;
+    completionDate                      @title           : '{i18n>completionDateCentral}'  @UI.HiddenFilter               : true;
     local_completionDate                @title           : '{i18n>local_completionDate}'  @UI.HiddenFilter                : true;
     status                              @title           : '{i18n>status}'  @UI.HiddenFilter                              : true;
     approver                            @title           : '{i18n>approver}'  @UI.HiddenFilter                            : true;

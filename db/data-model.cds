@@ -28,8 +28,6 @@ entity User_Approve_Maintain {
 
 entity Vendor_List : managed {
     key manufacturerCode          : String(10);
-        // key localManufacturerCode     : String(10);
-        // @Consumption.filter.hidden : true
     key countryCode               : Association to countriesCodeList
                                                                     @description     : 'Country'
                                                                     @Common          : {Text : 'countryCode.desc'};
@@ -48,13 +46,11 @@ entity Vendor_List : managed {
 entity Pricing_Conditions : managed {
     key manufacturerCode     : String(10);
     key countryCode          : Association to countriesCodeList;
-        // countryDesc          : String;
-
-        uuid                 : UUID @UI.HiddenFilter : true;
+    key uuid                 : UUID @UI.HiddenFilter : true;
         manufacturerCodeDesc : String(35);
         localCurrency        : Currency;
-        exchangeRate         : Decimal(4, 2);
-        countryFactor        : Decimal(4, 2);
+        exchangeRate         : Decimal(5, 3);
+        countryFactor        : Decimal(5, 3);
         validityStart        : Date;
         validityEnd          : Date;
         initiator            : String(10);
@@ -64,18 +60,12 @@ entity Pricing_Conditions : managed {
         // local_ownership      : Boolean;
         lo_exchangeRate      : Boolean;
         lo_countryFactor     : Boolean;
-        // to_status            : Association to statusList;
-        // status               : String(10);
         status               : Association to statusList;
         @UI.Hidden       :                             true
         @UI.HiddenFilter :                             true
         p_notif              : Composition of Pricing_Notifications;
 }
 
-// entity statusList CodeList {{
-//             key code        : String(10);
-//         criticality : Integer; //  2: yellow colour,  3: green colour, 0: unknown
-// }
 entity statusList : CodeList {
         @UI.Hidden       : true
         @UI.HiddenFilter : true

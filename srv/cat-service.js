@@ -34,16 +34,16 @@ module.exports = async function () {
     this.before("INSERT", "PricingConditions", async (req, next) => {
         try {
             var status = "Pending";
-            // if (req.data.lo_exchangeRate) {
-            //     if (req.data.lo_exchangeRate === true) {
-            //         status = "Forwarded";
-            //     }
-            // }
-            // if (req.data.lo_countryFactor) {
-            //     if (req.data.lo_countryFactor === true) {
-            //         status = "Forwarded";
-            //     }
-            // }
+            var aPricing = await SELECT.from(Pricing_Conditions).where(
+                {
+                    manufacturerCode: req.data.manufacturerCode,
+                    countryCode_code: req.data.countryCode_code.toUpperCase(),
+                    status_code: ['Pending', 'Forwarded', 'Approved', 'Rejected', 'In Progress']
+                }
+            );
+            if (aPricing.length > 0) {
+                req.error(400, "Record with same Manufacturer and Country are already existing in the table");
+            }
             var sErrorMsg = await validatePricing(req.data);
             if (sErrorMsg !== "") {
                 req.error(400, sErrorMsg);
@@ -81,6 +81,7 @@ module.exports = async function () {
                 if (req.data.p_notif) {
                     req.data.p_notif.Pricing_Conditions_manufacturerCode = req.data.manufacturerCode;
                     req.data.p_notif.Pricing_Conditions_countryCode_code = req.data.countryCode_code;
+                    req.data.p_notif.Pricing_Conditions_uuid = req.data.uuid;
                     req.data.p_notif.manufacturerCodeDesc = req.data.manufacturerCodeDesc;
                     req.data.p_notif.approver = sApprover;
                     req.data.p_notif.user = req.user.id.toUpperCase();
@@ -229,7 +230,8 @@ module.exports = async function () {
             oPricingCond = await SELECT.one(Pricing_Conditions).where(
                 {
                     manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
-                    countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
+                    countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code,
+                    uuid: PricingNotifications.Pricing_Conditions_uuid,
                 }
             );
             if (oPricingCond === null) {
@@ -262,7 +264,8 @@ module.exports = async function () {
             oPricingCond = await SELECT.one(Pricing_Conditions).where(
                 {
                     manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
-                    countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
+                    countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code,
+                    uuid: PricingNotifications.Pricing_Conditions_uuid
                 }
             );
             if (oPricingCond === null) {
@@ -292,7 +295,8 @@ module.exports = async function () {
                     }).where(
                         {
                             manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
-                            countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
+                            countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code,
+                            uuid: PricingNotifications.Pricing_Conditions_uuid
                         }
                     );
                     return oPricingCond;
@@ -312,7 +316,8 @@ module.exports = async function () {
                 }).where(
                     {
                         manufacturerCode: PricingNotifications.Pricing_Conditions_manufacturerCode,
-                        countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code
+                        countryCode_code: PricingNotifications.Pricing_Conditions_countryCode_code,
+                        uuid: PricingNotifications.Pricing_Conditions_uuid
                     }
                 );
 
@@ -404,7 +409,8 @@ module.exports = async function () {
             }).where(
                 {
                     manufacturerCode: req.data.manufacturerCode,
-                    countryCode_code: req.data.countryCode_code
+                    countryCode_code: req.data.countryCode_code,
+                    uuid: oNotif.Pricing_Conditions_uuid
                 }
             );
         }
@@ -474,7 +480,8 @@ module.exports = async function () {
             oPricingCond = await SELECT.one(Pricing_Conditions).where(
                 {
                     manufacturerCode: PricingComments.Pricing_Conditions_manufacturerCode,
-                    countryCode_code: PricingComments.Pricing_Conditions_countryCode_code
+                    countryCode_code: PricingComments.Pricing_Conditions_countryCode_code,
+                    uuid: PricingComments.Pricing_Conditions_uuid
                 }
             );
             if (oPricingCond.ld_initiator !== null) {
@@ -519,7 +526,8 @@ module.exports = async function () {
             }).where(
                 {
                     manufacturerCode: PricingComments.Pricing_Conditions_manufacturerCode,
-                    countryCode_code: PricingComments.Pricing_Conditions_countryCode_code
+                    countryCode_code: PricingComments.Pricing_Conditions_countryCode_code,
+                    uuid: PricingComments.Pricing_Conditions_uuid
                 }
             );
 
@@ -595,7 +603,8 @@ module.exports = async function () {
             oPricing = await SELECT.one(Pricing_Conditions).where(
                 {
                     manufacturerCode: req.data.manufacturerCode,
-                    countryCode_code: req.data.countryCode_code
+                    countryCode_code: req.data.countryCode_code,
+                    uuid: req.data.uuid
                 }
             );
             if (oPricing.status_code === "Approved") {
