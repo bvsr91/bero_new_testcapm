@@ -600,6 +600,7 @@ module.exports = async function () {
         try {
             var sUser = req.user.id.toUpperCase();
             req.data.modifiedBy = sUser;
+            var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
             oPricing = await SELECT.one(Pricing_Conditions).where(
                 {
                     manufacturerCode: req.data.manufacturerCode,
@@ -610,7 +611,10 @@ module.exports = async function () {
             if (oPricing.status_code === "Approved") {
                 req.reject(400, "You can not modify/update the approved record");
             }
-            var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
+            if (!(oPricing.lo_exchangeRate === true && oPricing.lo_countryFactor === true && oPricing.status_code === "Forwarded" && req.data.status_code === "Pending"
+                && (oUser.role_role === "CDT" || oUser.role_role === "SGC") && oPricing.createdBy === sUser)) {
+                req.reject(400, "You can not modify/update this record");
+            }
             if (req.data.status_code !== "Deleted") {
                 if (oPricing.status_code !== "Approved" && oPricing.status_code !== "Forwarded") {
                     if ((req.data.lo_exchangeRate === true && req.data.lo_countryFactor === true) && req.data.ld_initiator === null && (oUser.role_role === "CDT" || oUser.role_role === "SGC")) {
@@ -864,9 +868,12 @@ module.exports = async function () {
             }
         }
         var bValidEndDate = validateStartEndDate(oReq.validityStart, oReq.validityEnd);
-        if (!bValidEndDate) {
+        if (bValidEndDate === "1") {
             bFinalValidation = false;
             sFinalMsg = prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+        } else if (bValidEndDate === "2") {
+            bFinalValidation = false;
+            sFinalMsg = prepareErrorMsg(sFinalMsg, "Validity Start and End Date are mandatory");
         }
         return sFinalMsg;
     }
@@ -880,14 +887,14 @@ module.exports = async function () {
     }
 
     function validateStartEndDate(startDate, endDate) {
-        if ((startDate || startDate !== null) || (endDate || endDate !== null)) {
+        if ((startDate || startDate !== null) && (endDate || endDate !== null)) {
             if (new Date(endDate) > new Date(startDate)) {
-                return true;
+                return "0";
             } else {
-                return false;
+                return "1";
             }
         } else {
-            return true;
+            return "2";
         }
     }
 

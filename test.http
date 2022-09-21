@@ -1,9 +1,14 @@
-POST http://localhost:4004/v2/MroSrv/PricingComments
+POST http://localhost:4004/v2/MroSrv/PricingConditions
 Content-Type: application/json;IEEE754Compatible=true
 
-{
-"Comment": "rejecting again for trial",
-"Pricing_Conditions_countryCode_code": "IT",
-"Pricing_Conditions_manufacturerCode": "100334",
-"pricing_Notif_uuid": "1831cb2f-61bf-426d-b74c-74173bd283ab"
-}
+{"manufacturerCode":"12000",
+"countryCode_code":"IT",
+"manufacturerCodeDesc":"",
+"countryFactor":null,
+"exchangeRate":null,
+"validityStart":null,
+"validityEnd":null,
+"localCurrency_code":null,
+"lo_exchangeRate":true,
+"lo_countryFactor":true,
+"p_notif":{}}
