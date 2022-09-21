@@ -238,6 +238,18 @@ module.exports = async function () {
                 req.reject(400, "Record is not available in the Pricing Conditions table for the given Manufacturer Code : " + PricingNotifications.Pricing_Conditions_manufacturerCode
                     + " and  Country Code : " + PricingNotifications.Pricing_Conditions_countryCode_code);
             }
+
+            if (req.data.status_code === "Approved") {
+                if (oPricingCond.status_code !== "Pending") {
+                    req.reject(400, "You can not approve the request which is in the " + oPricingCond.status_code + " Status");
+                }
+            }
+            if (req.data.status_code === "Pending") {
+                if (oPricingCond.status_code === "Approved") {
+                    req.reject(400, "You can not update the request which is in the " + oPricingCond.status_code + " Status");
+                }
+            }
+
             if ((oPricingCond.lo_countryFactor === true || oPricingCond.lo_exchangeRate === true) && oPricingCond.ld_initiator === null) {
                 sUser = req.user.id;
                 status = "Forwarded";
@@ -352,6 +364,11 @@ module.exports = async function () {
                     + VendorNotifications.localManufacturerCode
                     + " and  Country Code : " + VendorNotifications.Vendor_List_countryCode_code);
             }
+            if (oVendList.status_code === "Approved" || oVendList.status_code === "Deleted") {
+                if (oVendList.status_code !== "Pending") {
+                    req.reject(400, "You can not approve the request which is in the " + oVendList.status_code + " Status");
+                }
+            }
             oResult = await SELECT.one(UserDetails).where({ userid: oVendList.createdBy });
             var mailId, managerid;
             if (oResult) {
@@ -429,6 +446,11 @@ module.exports = async function () {
                     countryCode_code: VendorComments.Vendor_List_countryCode_code
                 }
             );
+            if (oVendList.status_code === "Approved" || oVendList.status_code === "Deleted") {
+                if (oVendList.status_code !== "Pending") {
+                    req.reject(400, "You can not reject the request which is in the " + oVendList.status_code + " Status");
+                }
+            }
             oResult = await SELECT.one(UserDetails).where({ userid: oVendList.createdBy });
             var mailId, managerid;
             if (oResult) {
@@ -484,6 +506,10 @@ module.exports = async function () {
                     uuid: PricingComments.Pricing_Conditions_uuid
                 }
             );
+            if (oPricingCond.status_code !== "Pending") {
+                req.reject(400, "You can not reject the request which is in the " + oPricingCond.status_code + " Status");
+            }
+
             if (oPricingCond.ld_initiator !== null) {
                 oResult = await SELECT.one(UserDetails).where({ userid: oPricingCond.ld_initiator });
             } else {
@@ -608,6 +634,7 @@ module.exports = async function () {
     this.before("UPDATE", "PricingConditions", async (req, next) => {
         try {
             var sUser = req.user.id.toUpperCase();
+            // var sUser = "PRIYAJANB1";
             req.data.modifiedBy = sUser;
             var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
             oPricing = await SELECT.one(Pricing_Conditions).where(
@@ -662,6 +689,7 @@ module.exports = async function () {
                     req.error(400, "Local Team is not authorized to Delete the request");
                 }
             }
+            return req;
         } catch (error) {
             req.reject(error);
         }
@@ -671,6 +699,13 @@ module.exports = async function () {
         var oPricingConditions = await next();
         try {
             var oUser = await SELECT.one(UserDetails).where({ userid: req.user.id.toUpperCase() });
+            oPricingMain = await SELECT.one(Pricing_Conditions).where(
+                {
+                    manufacturerCode: oPricingConditions.manufacturerCode,
+                    countryCode_code: oPricingConditions.countryCode_code,
+                    uuid: oPricingConditions.uuid
+                }
+            );
             if (req.data.status_code !== "Deleted") {
                 if (oPricingConditions.status_code !== "Deleted") {
                     var sUser, status;
@@ -758,6 +793,22 @@ module.exports = async function () {
                         uuid: oPricingConditions.p_notif_uuid
                     }
                 );
+                var sManager = "";
+                if (oPricingMain.loApprover) {
+                    sManager = oPricingMain.loApprover;
+                } else {
+                    sManager = oPricingMain.approver;
+                }
+                oResult = await SELECT.one(UserDetails).where({ userid: sManager });
+                if (oResult) {
+                    createNoti.mainPayload({
+                        requestType: "Deleted",
+                        requestDetail: "Manufacturer- " + oPricingMain.manufacturerCode + " & Country- " + oPricingMain.countryCode_code,
+                        from_user: req.user.id.toUpperCase(),
+                        recipients: [oResult.mail_id],
+                        priority: "High"
+                    });
+                }
             }
 
         } catch (err) {
@@ -811,7 +862,8 @@ module.exports = async function () {
             oVendList = await SELECT.one(Vendor_List).where(
                 {
                     manufacturerCode: VendorList.manufacturerCode,
-                    countryCode_code: VendorList.countryCode_code
+                    countryCode_code: VendorList.countryCode_code,
+                    uuid: VendorList.uuid
                 }
             );
             result = await SELECT.from(UserDetails).where({ userid: oVendList.approver });
@@ -833,7 +885,7 @@ module.exports = async function () {
                 }
             );
             vendorNoti.mainPayload({
-                requestType: "Updated",
+                requestType: VendorList.status_code === "Deleted" ? "Deleted" : "Updated",
                 requestDetail: "Manufacturer- " + VendorList.manufacturerCode + " & Local Manufacturer- " + VendorList.localManufacturerCode
                     + " & Country- " + VendorList.countryCode_code,
                 from_user: req.user.id.toUpperCase(),

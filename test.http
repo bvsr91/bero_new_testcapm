@@ -1,7 +1,7 @@
-POST http://localhost:4004/v2/MroSrv/reopenPricing
+PUT http://localhost:4004/v2/MroSrv/PricingConditions(manufacturerCode='test2345',countryCode_code='IT',uuid=guid'd0a47874-3aaa-483b-b40d-ba86dda07ecb')
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-  "notif_uuid":"83177bdb-7436-4ed6-87fb-a4018bbd2283",
-  "status":"Pending"
+    "status_code":"Deleted",
+    "p_notif_uuid":"d8a4874c-de3d-4bd2-961c-8177403db04e"
 }
