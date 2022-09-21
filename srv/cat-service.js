@@ -551,42 +551,51 @@ module.exports = async function () {
             var sUser = req.user.id.toUpperCase();
             var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
             if (oUser && (oUser.role_role === "GCM" || oUser.role_role === "SGC")) {
-                var oVend = await SELECT.one(Vendor_List).where({
-                    manufacturerCode: req.data.manufacturerCode,
-                    countryCode_code: req.data.countryCode_code,
-                    status_code: "Approved"
+                var oVendNoti = await SELECT.one(Vendor_Notifications).where({
+                    uuid: req.data.notif_uuid
                 });
-                if (oVend && oVend.approver === sUser) {
-                    var result = await UPDATE(Vendor_Notifications).with({
-                        status_code: "Pending",
-                        modifiedBy: req.user.id.toUpperCase()
-                    }).where({
-                        uuid: req.data.notif_uuid
+                if (oVendNoti) {
+                    var oVend = await SELECT.one(Vendor_List).where({
+                        manufacturerCode: oVendNoti.Vendor_List_manufacturerCode,
+                        countryCode_code: oVendNoti.Vendor_List_countryCode_code,
+                        uuid: oVendNoti.Vendor_List_uuid,
+                        status_code: "Approved"
                     });
-                    if (result === 1) {
-                        var result = await UPDATE(Vendor_List).with({
-                            status_code: "Pending",
+                    if (oVend && oVend.approver === sUser) {
+                        var result = await UPDATE(Vendor_Notifications).with({
+                            status_code: req.data.status,
                             modifiedBy: req.user.id.toUpperCase()
-                        }).where(
-                            {
-                                manufacturerCode: req.data.manufacturerCode,
-                                countryCode_code: req.data.countryCode_code
+                        }).where({
+                            uuid: req.data.notif_uuid
+                        });
+                        if (result === 1) {
+                            var result = await UPDATE(Vendor_List).with({
+                                status_code: req.data.status,
+                                modifiedBy: req.user.id.toUpperCase()
+                            }).where(
+                                {
+                                    manufacturerCode: oVendNoti.Vendor_List_manufacturerCode,
+                                    countryCode_code: oVendNoti.Vendor_List_countryCode_code,
+                                    uuid: oVendNoti.Vendor_List_uuid
+                                }
+                            );
+                            var oMail = await SELECT.one(UserDetails).where({ userid: oVend.createdBy });
+                            if (oMail && oMail.mail_id !== "") {
+                                vendorNoti.mainPayload({
+                                    requestType: "Reopen Request: Status " + req.data.status,
+                                    requestDetail: "Manufacturer- " + oVendNoti.Vendor_List_manufacturerCode + " & Local Manufacturer- " + oVendNoti.localManufacturerCode
+                                        + " & Country- " + oVendNoti.Vendor_List_countryCode_code,
+                                    from_user: sUser,
+                                    recipients: [oMail.mail_id],
+                                    priority: "Medium"
+                                });
                             }
-                        );
-                        var oMail = await SELECT.one(UserDetails).where({ userid: oVend.createdBy });
-                        if (oMail && oMail.mail_id !== "") {
-                            vendorNoti.mainPayload({
-                                requestType: "Reopen Request",
-                                requestDetail: "Manufacturer- " + req.data.manufacturerCode + " & Local Manufacturer- " + oVend.localManufacturerCode
-                                    + " & Country- " + req.data.countryCode_code,
-                                from_user: sUser,
-                                recipients: [oMail.mail_id],
-                                priority: "Medium"
-                            });
                         }
+                    } else {
+                        req.reject(400, "You are not authorized to reopen the request");
                     }
                 } else {
-                    req.reject(400, "You are not authorized to reopen the request");
+                    req.reject(400, "No record found with the given data");
                 }
             } else {
                 req.reject(400, "You are not authorized to reopen the request");
@@ -611,12 +620,16 @@ module.exports = async function () {
             if (oPricing.status_code === "Approved") {
                 req.reject(400, "You can not modify/update the approved record");
             }
-            if (!(oPricing.lo_exchangeRate === true && oPricing.lo_countryFactor === true && oPricing.status_code === "Forwarded" && req.data.status_code === "Pending"
-                && (oUser.role_role === "CDT" || oUser.role_role === "SGC") && oPricing.createdBy === sUser)) {
-                req.reject(400, "You can not modify/update this record");
+            if (oPricing.status_code === "Forwarded" && oPricing.ld_initiator === null) {
+                if (!(oPricing.lo_exchangeRate === true && oPricing.lo_countryFactor === true && req.data.status_code === "Pending"
+                    && (oUser.role_role === "CDT" || oUser.role_role === "SGC"))) {
+                    // && oPricing.createdBy === sUser)) {
+                    req.reject(400, "You can not modify/update this record");
+                }
             }
+
             if (req.data.status_code !== "Deleted") {
-                if (oPricing.status_code !== "Approved" && oPricing.status_code !== "Forwarded") {
+                if (oPricing.status_code !== "Approved") {
                     if ((req.data.lo_exchangeRate === true && req.data.lo_countryFactor === true) && req.data.ld_initiator === null && (oUser.role_role === "CDT" || oUser.role_role === "SGC")) {
                         req.data.status_code = "Forwarded";
                         // req.data.approver = "";

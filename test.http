@@ -1,14 +1,7 @@
-POST http://localhost:4004/v2/MroSrv/PricingConditions
+POST http://localhost:4004/v2/MroSrv/reopenVendor
 Content-Type: application/json;IEEE754Compatible=true
 
-{"manufacturerCode":"12000",
-"countryCode_code":"IT",
-"manufacturerCodeDesc":"",
-"countryFactor":null,
-"exchangeRate":null,
-"validityStart":null,
-"validityEnd":null,
-"localCurrency_code":null,
-"lo_exchangeRate":true,
-"lo_countryFactor":true,
-"p_notif":{}}
+{
+   "notif_uuid": "f4fd00a9-1c19-405a-9170-7375cba9cc1d",
+"status": "Pending"
+}
