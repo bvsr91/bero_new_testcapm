@@ -1,7 +1,7 @@
-POST http://localhost:4004/v2/MroSrv/reopenVendor
+POST http://localhost:4004/v2/MroSrv/reopenPricing
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-   "notif_uuid": "f4fd00a9-1c19-405a-9170-7375cba9cc1d",
-"status": "Pending"
+  "notif_uuid":"83177bdb-7436-4ed6-87fb-a4018bbd2283",
+  "status":"Pending"
 }

@@ -44,6 +44,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     };
 
     action reopenVendor(notif_uuid : String, status : String)                                     returns String;
+    action reopenPricing(notif_uuid : String, status : String)                                    returns String;
 
     @readonly
     entity CheckUserRole          as projection on my.Users_Role_Assign;

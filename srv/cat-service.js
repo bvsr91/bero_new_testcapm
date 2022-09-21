@@ -582,7 +582,7 @@ module.exports = async function () {
                             var oMail = await SELECT.one(UserDetails).where({ userid: oVend.createdBy });
                             if (oMail && oMail.mail_id !== "") {
                                 vendorNoti.mainPayload({
-                                    requestType: "Reopen Request: Status " + req.data.status,
+                                    requestType: "Reopen Vendor Request: Status " + req.data.status + ", ",
                                     requestDetail: "Manufacturer- " + oVendNoti.Vendor_List_manufacturerCode + " & Local Manufacturer- " + oVendNoti.localManufacturerCode
                                         + " & Country- " + oVendNoti.Vendor_List_countryCode_code,
                                     from_user: sUser,
@@ -847,24 +847,75 @@ module.exports = async function () {
         return VendorList;
     });
 
-    // this.before("UPDATE", "PricingConditions", async (req, next) => {
-    //     try {
-    //         req.data.modifiedBy = req.user.id.toUpperCase();
-    //         oPricing = await SELECT.one(Pricing_Conditions).where(
-    //             {
-    //                 manufacturerCode: req.data.manufacturerCode,
-    //                 countryCode_code: req.data.countryCode_code
-    //             }
-    //         );
-    //         if (oPricing.status_code === "Approved") {
-    //             req.reject(400, "You can not modify/update the approved record");
-    //         } else {
-    //             return req;
-    //         }
-    //     } catch (err) {
-    //         req.reject(400, err);
-    //     }
-    // });
+    this.on("reopenPricing", async (req, next) => {
+        var oPayLoad = await next();
+        try {
+            var sStatus = req.data.status,
+                sForwardUser = ""
+            var sUser = req.user.id.toUpperCase();
+            var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
+            if (oUser && (oUser.role_role === "GCM" || oUser.role_role === "SGC" || oUser.role_role === "LP" || oUser.role_role === "SLP")) {
+                var oPricingNoti = await SELECT.one(Pricing_Notifications).where({
+                    uuid: req.data.notif_uuid
+                });
+                if (oPricingNoti) {
+                    var oPricing = await SELECT.one(Pricing_Conditions).where({
+                        manufacturerCode: oPricingNoti.Pricing_Conditions_manufacturerCode,
+                        countryCode_code: oPricingNoti.Pricing_Conditions_countryCode_code,
+                        uuid: oPricingNoti.Pricing_Conditions_uuid,
+                        status_code: "Approved"
+                    });
+                    if (oPricing) {
+                        if (oPricing.localApprover !== null && oPricing.localApprover === sUser && (oUser.role_role === "LP" || oUser.role_role === "SLP")) {
+                            sStatus = sStatus === "Pending" ? "In Progress" : sStatus;
+                            sForwardUser = oPricing.ld_initiator;
+                        } else if (oPricing.localApprover === null && oPricing.approver === sUser) {
+                            sForwardUser = oPricing.createdBy;
+                        } else {
+                            req.reject(400, "You are not authorized to reopen the request");
+                        }
+
+                        var result = await UPDATE(Pricing_Notifications).with({
+                            status_code: sStatus,
+                            modifiedBy: req.user.id.toUpperCase()
+                        }).where({
+                            uuid: req.data.notif_uuid
+                        });
+                        if (result === 1) {
+                            var result = await UPDATE(Pricing_Conditions).with({
+                                status_code: sStatus,
+                                modifiedBy: req.user.id.toUpperCase()
+                            }).where(
+                                {
+                                    manufacturerCode: oPricingNoti.Pricing_Conditions_manufacturerCode,
+                                    countryCode_code: oPricingNoti.Pricing_Conditions_countryCode_code,
+                                    uuid: oPricingNoti.Pricing_Conditions_uuid
+                                }
+                            );
+                            var oMail = await SELECT.one(UserDetails).where({ userid: sForwardUser.toUpperCase() });
+                            if (oMail && oMail.mail_id !== "") {
+                                createNoti.mainPayload({
+                                    requestType: "Reopen Pricing Request: " + sStatus + ", ",
+                                    requestDetail: "Manufacturer- " + oPricingNoti.Pricing_Conditions_manufacturerCode + " & Country- " + oPricingNoti.Pricing_Conditions_countryCode_code,
+                                    from_user: sUser,
+                                    recipients: [oMail.mail_id],
+                                    priority: "Medium"
+                                });
+                            }
+                        }
+                    } else {
+                        req.reject(400, "You are not authorized to reopen the request");
+                    }
+                } else {
+                    req.reject(400, "No record found with the given data");
+                }
+            } else {
+                req.reject(400, "You are not authorized to reopen the request");
+            }
+        } catch (error) {
+            req.reject(error);
+        }
+    });
 
     async function validatePricing(oReq) {
         var bFinalValidation = true, sFinalMsg = "";
