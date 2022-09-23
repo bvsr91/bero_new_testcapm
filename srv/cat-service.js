@@ -647,11 +647,15 @@ module.exports = async function () {
             if (oPricing.status_code === "Approved") {
                 req.reject(400, "You can not modify/update the approved record");
             }
-            if (oPricing.status_code === "Forwarded" && oPricing.ld_initiator === null) {
-                if (!(oPricing.lo_exchangeRate === true && oPricing.lo_countryFactor === true && req.data.status_code === "Pending"
-                    && (oUser.role_role === "CDT" || oUser.role_role === "SGC"))) {
-                    // && oPricing.createdBy === sUser)) {
-                    req.reject(400, "You can not modify/update this record");
+            if (oPricing.ld_initiator !== null && (oUser.role_role === "CDT" || oUser.role_role === "SGC")) {
+                req.reject(400, "You can not modify/update this record, the record is in local team scope");
+            }
+            if (oPricing.status_code === "Forwarded" && oPricing.ld_initiator === null && (oPricing.lo_exchangeRate === true && oPricing.lo_countryFactor === true)) {
+                var aAllowRoles = ["CDT", "SGC"];
+                if (aAllowRoles.includes(oUser.role_role)) {
+                    if (!(req.data.status_code === "Pending" || req.data.status_code === "Deleted")) {
+                        req.reject(400, "You can not modify/update this record");
+                    }
                 }
             }
 
@@ -843,11 +847,12 @@ module.exports = async function () {
             oVendList = await SELECT.one(Vendor_List).where(
                 {
                     manufacturerCode: req.data.manufacturerCode,
-                    countryCode_code: req.data.countryCode_code
+                    countryCode_code: req.data.countryCode_code,
+                    uuid: req.data.uuid
                 }
             );
-            if (oVendList.status_code === "Approved") {
-                req.reject(400, "You can not modify/update the approved record");
+            if (oVendList.status_code === "Approved" || oVendList.status_code === "Deleted") {
+                req.reject(400, "You can not modify/update the " + oVendList.status_code + " record");
             } else {
                 return req;
             }
