@@ -12,6 +12,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     entity Users                  as projection on my.Users_Role_Assign;
     entity MaintainApproval       as projection on my.User_Approve_Maintain;
 
+    @cds.redirection.target
     entity VendorList             as projection on my.Vendor_List order by
         modifiedAt desc;
 
@@ -89,6 +90,80 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
             or status.code       in ('Forwarded')
         order by
             modifiedAt desc;
+
+    @readonly
+    entity VendorNoti_U           as
+        select * from my.Vendor_List
+        where
+                upper(createdBy) =  upper($user)
+            and status.code      != 'Deleted'
+        order by
+            modifiedAt desc;
+
+    @readonly
+    entity VendorNoti_A           as
+        select * from my.Vendor_List
+        where
+                upper(approver) =  upper($user)
+            and status.code     != 'Deleted'
+        order by
+            modifiedAt desc;
+
+    @readonly
+    entity PricingNoti_CU         as
+        select * from my.Pricing_Conditions
+        where
+                upper(createdBy) =      upper($user)
+            and ld_initiator     is     null
+            and status.code      not in (
+                'Deleted', 'Forwarded', 'In Progress')
+            order by
+                modifiedAt desc;
+
+    @readonly
+    entity PricingNoti_CA         as
+        select * from my.Pricing_Conditions
+        where
+                upper(approver) =      upper($user)
+            and (
+                ld_initiator is null
+            )
+            and status.code     not in (
+                'Deleted', 'Forwarded', 'In Progress')
+            order by
+                modifiedAt desc;
+
+    @readonly
+    entity PricingNoti_LU         as
+        select * from my.Pricing_Conditions
+        where
+                upper(ld_initiator) =      upper($user)
+            and status.code         not in ('Deleted')
+            or  status.code         =      'Forwarded'
+        order by
+            modifiedAt desc;
+
+    @readonly
+    entity PricingNoti_LA         as
+        select * from my.Pricing_Conditions
+        where
+                upper(localApprover) =      upper($user)
+            and status.code          not in (
+                'Deleted', 'Forwarded', 'In Progress')
+            order by
+                modifiedAt desc;
+
+    @readonly
+    entity PricingNoti_CS         as
+        select * from my.Pricing_Conditions
+        where
+                upper(approver)  =      upper($user)
+            or  upper(createdBy) =      upper($user)
+            and ld_initiator     is     null
+            and status.code      not in (
+                'Forwarded', 'Deleted', 'In Progress')
+            order by
+                modifiedAt desc;
 
     view Status_Vendor as
         select * from my.statusList

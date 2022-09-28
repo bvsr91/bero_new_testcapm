@@ -529,3 +529,409 @@ annotate MroService.PricingNotifications_A with @(UI : {LineItem : [
     }
 
 ]});
+
+annotate MroService.PricingNoti_CU with @(UI : {LineItem : [
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCode,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '10rem'},
+        Label                 : 'Manufacturer'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : countryCode_code,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '10rem'},
+        Label                 : 'Country'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : status_code,
+        Criticality           : status.criticality,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #High
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : createdAt,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : central_completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : local_completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : approver,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localApprover,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : modifiedBy,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : createdBy,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    }
+
+]});
+
+annotate MroService.PricingNoti_CA with @(UI : {LineItem : [
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCode,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '10rem'},
+        Label                 : 'Manufacturer'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : countryCode_code,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '10rem'},
+        Label                 : 'Country'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : status_code,
+        Criticality           : status.criticality,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #High
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : createdAt,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : central_completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : local_completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : approver,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localApprover,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : modifiedBy,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : createdBy,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    }
+
+]});
+
+annotate MroService.PricingNoti_LU with @(UI : {LineItem : [
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCode,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '10rem'},
+        Label                 : 'Manufacturer'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : countryCode_code,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '10rem'},
+        Label                 : 'Country'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : status_code,
+        Criticality           : status.criticality,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #High
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : createdAt,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : central_completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : local_completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : approver,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localApprover,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : modifiedBy,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : createdBy,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    }
+
+]});
+
+annotate MroService.PricingNoti_LA with @(UI : {LineItem : [
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCode,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '10rem'},
+        Label                 : 'Manufacturer'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : countryCode_code,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '10rem'},
+        Label                 : 'Country'
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : status_code,
+        Criticality           : status.criticality,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #High
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : createdAt,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : central_completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : local_completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : approver,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localApprover,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : modifiedBy,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : createdBy,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+        ![@UI.Importance]     : #Medium
+    }
+
+]});
+
+annotate MroService.VendorNoti_U with @(UI : {LineItem : [
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCode,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'}
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localManufacturerCode,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'}
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localManufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'},
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : countryCode_code,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'}
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : status_code,
+        Criticality           : status.criticality,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #High
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : createdAt,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : createdBy,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : approver,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #Medium
+    }
+
+]});
+
+annotate MroService.VendorNoti_A with @(UI : {LineItem : [
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCode,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'}
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : manufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'}
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localManufacturerCode,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'}
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : localManufacturerCodeDesc,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'}
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : countryCode_code,
+        ![@UI.Importance]     : #High,
+        ![@HTML5.CssDefaults] : {width : '8rem'}
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : status_code,
+        Criticality           : status.criticality,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #High
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : createdAt,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : createdBy,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #Medium
+    },
+    {
+        $Type             : 'UI.DataField',
+        Value             : completionDate,
+        ![@UI.Importance] : #Medium
+    },
+    {
+        $Type                 : 'UI.DataField',
+        Value                 : approver,
+        ![@HTML5.CssDefaults] : {width : '7rem'},
+        ![@UI.Importance]     : #Medium
+    }
+
+]});

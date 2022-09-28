@@ -8,6 +8,7 @@ annotate schema.Vendor_List {
     localManufacturerCode     @title           : '{i18n>localManufacturerCode}'; // @Common.Text : localManufacturerCodeDesc;
     localManufacturerCodeDesc @title           : '{i18n>localManufacturerCodeDesc}';
     approver                  @title           : '{i18n>approver}'  @UI.HiddenFilter     : true;
+    completionDate            @title           : '{i18n>completionDate}';
     status                    @title           : '{i18n>status}';
     uuid                      @UI.HiddenFilter : true;
 }
@@ -17,24 +18,26 @@ annotate schema.Vendor_List {
 // }
 
 annotate schema.Pricing_Conditions {
-    manufacturerCode     @title           : '{i18n>manufacturerCode}'; // @Common.Text : manufacturerCodeDesc;
-    manufacturerCodeDesc @title           : '{i18n>manufacturerCodeDesc}';
-    countryCode          @title           : '{i18n>countryCode}'  @Common.Text       : countryCode.desc;
+    manufacturerCode       @title           : '{i18n>manufacturerCode}'; // @Common.Text : manufacturerCodeDesc;
+    manufacturerCodeDesc   @title           : '{i18n>manufacturerCodeDesc}';
+    countryCode            @title           : '{i18n>countryCode}'  @Common.Text       : countryCode.desc;
     // countryDesc          @title : '{i18n>countryDesc}'  @UI.HiddenFilter  : true  @UI.Hidden : true;
-    uuid                 @UI.HiddenFilter : true;
-    localCurrency        @title           : '{i18n>localCurrency}';
-    exchangeRate         @title           : '{i18n>exchangeRate}';
-    countryFactor        @title           : '{i18n>countryFactor}';
-    validityStart        @title           : '{i18n>validityStart}';
-    validityEnd          @title           : '{i18n>validityEnd}';
-    initiator            @title           : '{i18n>initiator}';
-    ld_initiator         @title           : '{i18n>ld_initiator}';
-    approver             @title           : '{i18n>approver}'  @UI.HiddenFilter      : true;
-    localApprover        @title           : '{i18n>localApprover}'  @UI.HiddenFilter : true;
-    status               @title           : '{i18n>status}';
+    uuid                   @UI.HiddenFilter : true;
+    localCurrency          @title           : '{i18n>localCurrency}';
+    exchangeRate           @title           : '{i18n>exchangeRate}';
+    countryFactor          @title           : '{i18n>countryFactor}';
+    validityStart          @title           : '{i18n>validityStart}';
+    validityEnd            @title           : '{i18n>validityEnd}';
+    initiator              @title           : '{i18n>initiator}';
+    ld_initiator           @title           : '{i18n>ld_initiator}';
+    approver               @title           : '{i18n>approver}'  @UI.HiddenFilter      : true;
+    central_completionDate @title           : '{i18n>central_completionDate}';
+    local_completionDate   @title           : '{i18n>local_completionDate}';
+    localApprover          @title           : '{i18n>localApprover}'  @UI.HiddenFilter : true;
+    status                 @title           : '{i18n>status}';
     // local_ownership      @title           : '{i18n>local_ownership}';
-    lo_exchangeRate      @title           : '{i18n>lo_exchangeRate}';
-    lo_countryFactor     @title           : '{i18n>lo_countryFactor}';
+    lo_exchangeRate        @title           : '{i18n>lo_exchangeRate}';
+    lo_countryFactor       @title           : '{i18n>lo_countryFactor}';
 }
 
 annotate schema.Roles {

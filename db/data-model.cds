@@ -36,6 +36,7 @@ entity Vendor_List : managed {
         manufacturerCodeDesc      : String(35);
         localManufacturerCodeDesc : String(35);
         approver                  : String(10);
+        completionDate            : Timestamp;
         // status                    : String(10);
         status                    : Association to statusList;
                                                                     @UI.Hidden       : true
@@ -44,26 +45,28 @@ entity Vendor_List : managed {
 }
 
 entity Pricing_Conditions : managed {
-    key manufacturerCode     : String(10);
-    key countryCode          : Association to countriesCodeList;
-    key uuid                 : UUID @UI.HiddenFilter : true;
-        manufacturerCodeDesc : String(35);
-        localCurrency        : Currency;
-        exchangeRate         : Decimal(5, 3);
-        countryFactor        : Decimal(5, 3);
-        validityStart        : Date;
-        validityEnd          : Date;
-        initiator            : String(10);
-        approver             : String(10);
-        ld_initiator         : String(10);
-        localApprover        : String(10);
+    key manufacturerCode       : String(10);
+    key countryCode            : Association to countriesCodeList;
+    key uuid                   : UUID @UI.HiddenFilter : true;
+        manufacturerCodeDesc   : String(35);
+        localCurrency          : Currency;
+        exchangeRate           : Decimal(5, 3);
+        countryFactor          : Decimal(5, 3);
+        validityStart          : Date;
+        validityEnd            : Date;
+        initiator              : String(10);
+        approver               : String(10);
+        central_completionDate : Timestamp;
+        local_completionDate   : Timestamp;
+        ld_initiator           : String(10);
+        localApprover          : String(10);
         // local_ownership      : Boolean;
-        lo_exchangeRate      : Boolean;
-        lo_countryFactor     : Boolean;
-        status               : Association to statusList;
-        @UI.Hidden       :                             true
-        @UI.HiddenFilter :                             true
-        p_notif              : Composition of Pricing_Notifications;
+        lo_exchangeRate        : Boolean;
+        lo_countryFactor       : Boolean;
+        status                 : Association to statusList;
+        @UI.Hidden       :                               true
+        @UI.HiddenFilter :                               true
+        p_notif                : Composition of Pricing_Notifications;
 }
 
 entity statusList : CodeList {
