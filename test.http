@@ -1,4 +1,8 @@
-PUT http://localhost:4004/v2/MroSrv/PricingConditions(manufacturerCode='343',countryCode_code='IT',uuid=guid'58a33d71-f3ef-4fbe-8fa9-03568931b592')
+POST http://localhost:4004/v2/MroSrv/approveVendor
 Content-Type: application/json;IEEE754Compatible=true
 
-{"status_code":"Deleted","p_notif_uuid":"ba1e9c57-84a8-4c9b-801b-556477fd56c9"}
+{
+   "uuid":"2121",
+   "manufacturerCode":"8777",
+   "countryCode":"IN"
+}

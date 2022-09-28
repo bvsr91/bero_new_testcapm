@@ -35,8 +35,9 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     @cds.redirection.target
     entity VendorNotifications    as projection on my.Vendor_Notifications;
 
-    action approvePricing(uuid : String, manufacturerCode : String, countryCode : String)         returns String;
-    action acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String) returns String;
+    action approvePricing(uuid : String, manufacturerCode : String, countryCode : String)                returns String;
+    action acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String)        returns String;
+    action approveVendor(uuid : String, manufacturerCode : String, countryCode : String)                 returns String;
 
     type oVendList : many {
         manufacturerCode      : String(10);
@@ -44,8 +45,8 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
         countryCode           : String(10);
     };
 
-    action reopenVendor(notif_uuid : String, status : String)                                     returns String;
-    action reopenPricing(notif_uuid : String, status : String)                                    returns String;
+    action reopenVendor(uuid : String, manufacturerCode : String, countryCode : String, status : String) returns String;
+    action reopenPricing(notif_uuid : String, status : String)                                           returns String;
 
     @readonly
     entity CheckUserRole          as projection on my.Users_Role_Assign;

@@ -347,59 +347,59 @@ module.exports = async function () {
         return PricingNotifications;
     });
 
-    this.on("UPDATE", "VendorNotifications", async (req, next) => {
-        var VendorNotifications = await next();
-        try {
-            oVendList = await SELECT.one(Vendor_List).where(
-                {
-                    manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
-                    // localManufacturerCode: VendorNotifications.localManufacturerCode,
-                    uuid: VendorNotifications.Vendor_List_uuid,
-                    countryCode_code: VendorNotifications.Vendor_List_countryCode_code
-                }
-            );
-            if (oVendList === null) {
-                req.reject(400, "Record is not available in the Vendot List table for the given Manufacturer Code : "
-                    + VendorNotifications.Vendor_List_manufacturerCode + " , Local Manufacturer Code : "
-                    + VendorNotifications.localManufacturerCode
-                    + " and  Country Code : " + VendorNotifications.Vendor_List_countryCode_code);
-            }
-            if (oVendList.status_code === "Approved" || oVendList.status_code === "Deleted") {
-                if (oVendList.status_code !== "Pending") {
-                    req.reject(400, "You can not approve the request which is in the " + oVendList.status_code + " Status");
-                }
-            }
-            oResult = await SELECT.one(UserDetails).where({ userid: oVendList.createdBy });
-            var mailId, managerid;
-            if (oResult) {
-                mailId = oResult.mail_id;
-            }
-            await UPDATE(Vendor_List).with({
-                status_code: VendorNotifications.status_code,
-                modifiedBy: req.user.id.toUpperCase()
-            }).where(
-                {
-                    manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
-                    // localManufacturerCode: VendorNotifications.localManufacturerCode,
-                    uuid: VendorNotifications.Vendor_List_uuid,
-                    countryCode_code: VendorNotifications.Vendor_List_countryCode_code
-                }
-            );
+    // this.on("UPDATE", "VendorNotifications", async (req, next) => {
+    //     var VendorNotifications = await next();
+    //     try {
+    //         oVendList = await SELECT.one(Vendor_List).where(
+    //             {
+    //                 manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
+    //                 // localManufacturerCode: VendorNotifications.localManufacturerCode,
+    //                 uuid: VendorNotifications.Vendor_List_uuid,
+    //                 countryCode_code: VendorNotifications.Vendor_List_countryCode_code
+    //             }
+    //         );
+    //         if (oVendList === null) {
+    //             req.reject(400, "Record is not available in the Vendot List table for the given Manufacturer Code : "
+    //                 + VendorNotifications.Vendor_List_manufacturerCode + " , Local Manufacturer Code : "
+    //                 + VendorNotifications.localManufacturerCode
+    //                 + " and  Country Code : " + VendorNotifications.Vendor_List_countryCode_code);
+    //         }
+    //         if (oVendList.status_code === "Approved" || oVendList.status_code === "Deleted") {
+    //             if (oVendList.status_code !== "Pending") {
+    //                 req.reject(400, "You can not approve the request which is in the " + oVendList.status_code + " Status");
+    //             }
+    //         }
+    //         oResult = await SELECT.one(UserDetails).where({ userid: oVendList.createdBy });
+    //         var mailId, managerid;
+    //         if (oResult) {
+    //             mailId = oResult.mail_id;
+    //         }
+    //         await UPDATE(Vendor_List).with({
+    //             status_code: VendorNotifications.status_code,
+    //             modifiedBy: req.user.id.toUpperCase()
+    //         }).where(
+    //             {
+    //                 manufacturerCode: VendorNotifications.Vendor_List_manufacturerCode,
+    //                 // localManufacturerCode: VendorNotifications.localManufacturerCode,
+    //                 uuid: VendorNotifications.Vendor_List_uuid,
+    //                 countryCode_code: VendorNotifications.Vendor_List_countryCode_code
+    //             }
+    //         );
 
-            vendorNoti.mainPayload({
-                requestType: "Approved",
-                requestDetail: "Manufacturer- " + VendorNotifications.Vendor_List_manufacturerCode + " & Local Manufacturer- " + VendorNotifications.localManufacturerCode
-                    + " & Country- " + VendorNotifications.Vendor_List_countryCode_code,
-                from_user: req.user.id.toUpperCase(),
-                recipients: [mailId],
-                priority: "Low"
-            });
+    //         vendorNoti.mainPayload({
+    //             requestType: "Approved",
+    //             requestDetail: "Manufacturer- " + VendorNotifications.Vendor_List_manufacturerCode + " & Local Manufacturer- " + VendorNotifications.localManufacturerCode
+    //                 + " & Country- " + VendorNotifications.Vendor_List_countryCode_code,
+    //             from_user: req.user.id.toUpperCase(),
+    //             recipients: [mailId],
+    //             priority: "Low"
+    //         });
 
-        } catch (err) {
-            req.reject(400, err);
-        }
-        return VendorNotifications;
-    });
+    //     } catch (err) {
+    //         req.reject(400, err);
+    //     }
+    //     return VendorNotifications;
+    // });
 
     this.on("acceptPricingCond", async (req, next) => {
         var oPayLoad = await next();
@@ -457,19 +457,20 @@ module.exports = async function () {
                 mailId = oResult.mail_id;
             }
 
-            await UPDATE(Vendor_Notifications).with({
-                status_code: "Rejected",
-                approver: req.user.id.toUpperCase(),
-                approvedDate: new Date().toISOString(),
-                completionDate: new Date().toISOString(),
-                modifiedBy: req.user.id.toUpperCase()
-            }).where(
-                {
-                    uuid: VendorComments.vendor_Notif_uuid
-                }
-            );
+            // await UPDATE(Vendor_Notifications).with({
+            //     status_code: "Rejected",
+            //     approver: req.user.id.toUpperCase(),
+            //     approvedDate: new Date().toISOString(),
+            //     completionDate: new Date().toISOString(),
+            //     modifiedBy: req.user.id.toUpperCase()
+            // }).where(
+            //     {
+            //         uuid: VendorComments.vendor_Notif_uuid
+            //     }
+            // );
             await UPDATE(Vendor_List).with({
                 status_code: "Rejected",
+                completionDate: new Date().toISOString(),
                 modifiedBy: req.user.id.toUpperCase()
             }).where(
                 {
@@ -575,57 +576,47 @@ module.exports = async function () {
         var oPayLoad = await next();
         try {
             var sUser = req.user.id.toUpperCase();
+            var oReq = req.data;
             var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
             if (oUser && (oUser.role_role === "GCM" || oUser.role_role === "SGC")) {
-                var oVendNoti = await SELECT.one(Vendor_Notifications).where({
-                    uuid: req.data.notif_uuid
+                var oVend = await SELECT.one(Vendor_List).where({
+                    // manufacturerCode: oReq.manufacturerCode,
+                    // countryCode_code: oReq.countryCode,
+                    uuid: oReq.uuid,
+                    status_code: "Approved"
                 });
-                if (oVendNoti) {
-                    var oVend = await SELECT.one(Vendor_List).where({
-                        manufacturerCode: oVendNoti.Vendor_List_manufacturerCode,
-                        countryCode_code: oVendNoti.Vendor_List_countryCode_code,
-                        uuid: oVendNoti.Vendor_List_uuid,
-                        status_code: "Approved"
-                    });
-                    if (oVend && oVend.approver === sUser) {
-                        var result = await UPDATE(Vendor_Notifications).with({
-                            status_code: req.data.status,
-                            modifiedBy: req.user.id.toUpperCase()
-                        }).where({
-                            uuid: req.data.notif_uuid
-                        });
-                        if (result === 1) {
-                            var result = await UPDATE(Vendor_List).with({
-                                status_code: req.data.status,
-                                modifiedBy: req.user.id.toUpperCase()
-                            }).where(
-                                {
-                                    manufacturerCode: oVendNoti.Vendor_List_manufacturerCode,
-                                    countryCode_code: oVendNoti.Vendor_List_countryCode_code,
-                                    uuid: oVendNoti.Vendor_List_uuid
-                                }
-                            );
-                            var oMail = await SELECT.one(UserDetails).where({ userid: oVend.createdBy });
-                            if (oMail && oMail.mail_id !== "") {
-                                vendorNoti.mainPayload({
-                                    requestType: "Reopen Vendor Request: Status " + req.data.status + ", ",
-                                    requestDetail: "Manufacturer- " + oVendNoti.Vendor_List_manufacturerCode + " & Local Manufacturer- " + oVendNoti.localManufacturerCode
-                                        + " & Country- " + oVendNoti.Vendor_List_countryCode_code,
-                                    from_user: sUser,
-                                    recipients: [oMail.mail_id],
-                                    priority: "Medium"
-                                });
-                            }
+                if (oVend && oVend.approver === sUser) {
+                    var result = await UPDATE(Vendor_List).with({
+                        status_code: oReq.status,
+                        modifiedBy: req.user.id.toUpperCase()
+                    }).where(
+                        {
+                            manufacturerCode: oVend.manufacturerCode,
+                            countryCode_code: oVend.countryCode_code,
+                            uuid: oVend.uuid
                         }
-                    } else {
-                        req.reject(400, "You are not authorized to reopen the request");
+                    );
+                    var oMail = await SELECT.one(UserDetails).where({ userid: oVend.createdBy });
+                    if (oMail && oMail.mail_id !== "") {
+                        vendorNoti.mainPayload({
+                            requestType: "Reopen Vendor Request: Status " + req.data.status + ", ",
+                            requestDetail: "Manufacturer- " + oVend.manufacturerCode + " & Local Manufacturer- " + oVend.localManufacturerCode
+                                + " & Country- " + oVend.countryCode_code,
+                            from_user: sUser,
+                            recipients: [oMail.mail_id],
+                            priority: "Medium"
+                        });
                     }
+                    // }
                 } else {
-                    req.reject(400, "No record found with the given data");
+                    req.reject(400, "You are not authorized to reopen the request");
                 }
             } else {
-                req.reject(400, "You are not authorized to reopen the request");
+                req.reject(400, "No record found with the given data");
             }
+            // } else {
+            //     req.reject(400, "You are not authorized to reopen the request");
+            // }
         } catch (error) {
             req.reject(error);
         }
@@ -974,6 +965,60 @@ module.exports = async function () {
         }
     });
 
+    this.on("approveVendor", async (req, next) => {
+        var VendorNotifications = await next();
+        try {
+            var oReq = req.data;
+            oVendList = await SELECT.one(Vendor_List).where(
+                {
+                    manufacturerCode: oReq.manufacturerCode,
+                    uuid: oReq.uuid,
+                    countryCode_code: oReq.countryCode
+                }
+            );
+            var sReturnMsg = "Manufacturer Code: " + oReq.manufacturerCode + " and Country Code: " + oReq.countryCode;
+            if (oVendList === null) {
+                req.reject(400, "Record is not available in the Vendot List table for the given Manufacturer Code : "
+                    + oReq.manufacturerCode
+                    + " and  Country Code : " + oReq.countryCode);
+            }
+            if (oVendList.status_code === "Approved" || oVendList.status_code === "Deleted") {
+                if (oVendList.status_code !== "Pending") {
+                    req.reject(400, "You can not approve the request which is in the " + oVendList.status_code + " Status, for " + sReturnMsg);
+                }
+            }
+            oResult = await SELECT.one(UserDetails).where({ userid: oVendList.createdBy });
+            var mailId, managerid;
+            if (oResult) {
+                mailId = oResult.mail_id;
+            }
+            await UPDATE(Vendor_List).with({
+                status_code: "Approved",
+                completionDate: new Date().toISOString(),
+                modifiedBy: req.user.id.toUpperCase()
+            }).where(
+                {
+                    manufacturerCode: oReq.manufacturerCode,
+                    // localManufacturerCode: oReq.localManufacturerCode,
+                    uuid: oReq.uuid,
+                    countryCode_code: oReq.countryCode
+                }
+            );
+
+            vendorNoti.mainPayload({
+                requestType: "Approved",
+                requestDetail: "Manufacturer- " + oReq.manufacturerCode + " & Local Manufacturer- " + oVendList.localManufacturerCode
+                    + " & Country- " + oReq.countryCode,
+                from_user: req.user.id.toUpperCase(),
+                recipients: [mailId],
+                priority: "Low"
+            });
+            return sReturnMsg;
+        } catch (err) {
+            req.reject(400, err);
+        }
+    });
+
     async function validatePricing(oReq) {
         var bFinalValidation = true, sFinalMsg = "";
         if (!oReq.lo_exchangeRate) {
@@ -991,7 +1036,7 @@ module.exports = async function () {
         var bValidEndDate = validateStartEndDate(oReq.validityStart, oReq.validityEnd);
         if (bValidEndDate === "1") {
             bFinalValidation = false;
-            sFinalMsg = prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+            sFinalMsg = prepareErrorMsg(sFinalMsg, "Validity End must be greater than or equal to Validity Start");
         } else if (bValidEndDate === "2") {
             bFinalValidation = false;
             sFinalMsg = prepareErrorMsg(sFinalMsg, "Validity Start and End Date are mandatory");
@@ -1009,7 +1054,7 @@ module.exports = async function () {
 
     function validateStartEndDate(startDate, endDate) {
         if ((startDate || startDate !== null) && (endDate || endDate !== null)) {
-            if (new Date(endDate) > new Date(startDate)) {
+            if (new Date(endDate) >= new Date(startDate)) {
                 return "0";
             } else {
                 return "1";
