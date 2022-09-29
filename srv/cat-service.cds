@@ -123,6 +123,19 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
             order by
                 modifiedAt desc;
 
+    @readonly
+    entity PricingNoti_LS    as
+        select * from my.Pricing_Conditions
+        where
+            (
+                   upper(localApprover) = upper($user)
+                or upper(ld_initiator)  = upper($user)
+            )
+            and status.code not in ('Deleted')
+            or  status.code =      'Forwarded'
+        order by
+            modifiedAt desc;
+
     view Status_Vendor as
         select * from my.statusList
         where
