@@ -32,9 +32,6 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     @cds.redirection.target
     entity PricingNotifications   as projection on my.Pricing_Notifications;
 
-    @cds.redirection.target
-    entity VendorNotifications    as projection on my.Vendor_Notifications;
-
     action approvePricing(uuid : String, manufacturerCode : String, countryCode : String)                returns String;
     action acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String)        returns String;
     action approveVendor(uuid : String, manufacturerCode : String, countryCode : String)                 returns String;
@@ -53,14 +50,6 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
 
     @readonly
     entity UserDetails            as projection on my.UserDetails;
-
-    @readonly
-    entity VendorNotifications_A  as projection on my.VendorNotifications_A order by
-        modifiedAt desc;
-
-    @readonly
-    entity VendorNotifications_U  as projection on my.VendorNotifications_U order by
-        modifiedAt desc;
 
     @readonly
     entity PricingNotifications_U as

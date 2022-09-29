@@ -1,9 +1,8 @@
-POST http://localhost:4004/v2/MroSrv/reopenPricing
+POST http://localhost:4004/v2/MroSrv/approvePricing
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-    "manufacturerCode": "ED15",
-    "countryCode": "IT",
-    "uuid": "60736d11-8710-416e-a060-1f23a56119ee",
-    "status":"Pending"
+    "uuid": "bbfa1b5c-ff2b-4118-aab8-0c85596278d8",
+"manufacturerCode": "PD10",
+"countryCode": "IT"
 }

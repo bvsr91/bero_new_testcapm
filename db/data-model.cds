@@ -29,7 +29,7 @@ entity User_Approve_Maintain {
 entity Vendor_List : managed {
     key manufacturerCode          : String(10);
     key countryCode               : Association to countriesCodeList
-                                                                    @description     : 'Country'
+                                                                    @description :     'Country'
                                                                     @Common          : {Text : 'countryCode.desc'};
     key uuid                      : UUID                            @UI.HiddenFilter : true;
         localManufacturerCode     : String(10);
@@ -39,9 +39,6 @@ entity Vendor_List : managed {
         completionDate            : Timestamp;
         // status                    : String(10);
         status                    : Association to statusList;
-                                                                    @UI.Hidden       : true
-                                                                    @UI.HiddenFilter : true
-        v_notif                   : Composition of Vendor_Notifications;
 }
 
 entity Pricing_Conditions : managed {
@@ -97,7 +94,7 @@ entity Vendor_Comments : managed {
         Comment               : String;
         localManufacturerCode : String(10);
         Vendor_List           : Association to Vendor_List;
-        vendor_Notif          : Association to Vendor_Notifications;
+// vendor_Notif          : Association to Vendor_Notifications;
 }
 
 entity Pricing_Comments : managed {
@@ -119,17 +116,6 @@ entity Pricing_Notifications : managed {
         Pricing_Conditions   : Association to Pricing_Conditions;
 }
 
-entity Vendor_Notifications : managed {
-    key uuid                      : UUID;
-        manufacturerCodeDesc      : String(35);
-        localManufacturerCodeDesc : String(35);
-        approvedDate              : Timestamp;
-        approver                  : String;
-        completionDate            : Timestamp;
-        localManufacturerCode     : String(10);
-        status                    : Association to statusList;
-        Vendor_List               : Association to Vendor_List;
-}
 
 view UserDetails as
     select
@@ -141,19 +127,3 @@ view UserDetails as
     from Users_Role_Assign as a
     inner join User_Approve_Maintain as b
         on a.userid = b.userid;
-
-view VendorNotifications_U as
-    select * from Vendor_Notifications
-    where
-            upper(createdBy) =  upper($user)
-        and status.code      != 'Deleted'
-    order by
-        modifiedAt desc;
-
-view VendorNotifications_A as
-    select * from Vendor_Notifications
-    where
-            upper(approver) =  upper($user)
-        and status.code     != 'Deleted'
-    order by
-        modifiedAt desc;
