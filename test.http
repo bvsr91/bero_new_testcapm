@@ -2,7 +2,7 @@ POST http://localhost:4004/v2/MroSrv/approvePricing
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-    "uuid": "bbfa1b5c-ff2b-4118-aab8-0c85596278d8",
-"manufacturerCode": "PD10",
+    "uuid": "a0f9bcca-3f7d-48bd-8b04-02b71bd80175",
+"manufacturerCode": "DE3",
 "countryCode": "IT"
 }

@@ -8,30 +8,26 @@ using ferrero.mro as my from '../db/data-model';
 // }])
 service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     // @readonly
-    entity Roles                  as projection on my.Roles;
-    entity Users                  as projection on my.Users_Role_Assign;
-    entity MaintainApproval       as projection on my.User_Approve_Maintain;
+    entity Roles             as projection on my.Roles;
+    entity Users             as projection on my.Users_Role_Assign;
+    entity MaintainApproval  as projection on my.User_Approve_Maintain;
 
     @cds.redirection.target
-    entity VendorList             as projection on my.Vendor_List order by
+    entity VendorList        as projection on my.Vendor_List order by
         modifiedAt desc;
 
     @cds.redirection.target
-    entity PricingConditions      as projection on my.Pricing_Conditions order by
+    entity PricingConditions as projection on my.Pricing_Conditions order by
         modifiedAt desc;
 
     @cds.redirection.target
-    entity StatusCodeList         as projection on my.statusList;
+    entity StatusCodeList    as projection on my.statusList;
 
-    entity CountriesCodeList      as projection on my.countriesCodeList;
+    entity CountriesCodeList as projection on my.countriesCodeList;
     // entity VendorComments    as projection on my.vendorComments
 
-    entity VendorComments         as projection on my.Vendor_Comments;
-    entity PricingComments        as projection on my.Pricing_Comments;
-
-    @cds.redirection.target
-    entity PricingNotifications   as projection on my.Pricing_Notifications;
-
+    entity VendorComments    as projection on my.Vendor_Comments;
+    entity PricingComments   as projection on my.Pricing_Comments;
     action approvePricing(uuid : String, manufacturerCode : String, countryCode : String)                returns String;
     action acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String)        returns String;
     action approveVendor(uuid : String, manufacturerCode : String, countryCode : String)                 returns String;
@@ -46,43 +42,13 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     action reopenPricing(uuid : String, status : String)                                                 returns String;
 
     @readonly
-    entity CheckUserRole          as projection on my.Users_Role_Assign;
+    entity CheckUserRole     as projection on my.Users_Role_Assign;
 
     @readonly
-    entity UserDetails            as projection on my.UserDetails;
+    entity UserDetails       as projection on my.UserDetails;
 
     @readonly
-    entity PricingNotifications_U as
-        select * from my.Pricing_Notifications
-        where
-               upper(createdBy)  =  upper($user)
-            or upper(modifiedBy) =  upper($user)
-            or status.code       in ('Forwarded')
-        order by
-            modifiedAt desc;
-
-    @readonly
-    entity PricingNotifications_A as
-        select * from my.Pricing_Notifications
-        where
-                upper(approver) =  upper($user)
-            and status.code     != 'Deleted'
-        order by
-            modifiedAt desc;
-
-    @readonly
-    entity PricingNotifications_S as
-        select * from my.Pricing_Notifications
-        where
-               upper(approver)   =  upper($user)
-            or upper(createdBy)  =  upper($user)
-            or upper(modifiedBy) =  upper($user)
-            or status.code       in ('Forwarded')
-        order by
-            modifiedAt desc;
-
-    @readonly
-    entity VendorNoti_U           as
+    entity VendorNoti_U      as
         select * from my.Vendor_List
         where
                 upper(createdBy) =  upper($user)
@@ -91,7 +57,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
             modifiedAt desc;
 
     @readonly
-    entity VendorNoti_A           as
+    entity VendorNoti_A      as
         select * from my.Vendor_List
         where
                 upper(approver) =  upper($user)
@@ -100,7 +66,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
             modifiedAt desc;
 
     @readonly
-    entity PricingNoti_CU         as
+    entity PricingNoti_CU    as
         select * from my.Pricing_Conditions
         where
                 upper(createdBy) =      upper($user)
@@ -111,7 +77,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
                 modifiedAt desc;
 
     @readonly
-    entity PricingNoti_CA         as
+    entity PricingNoti_CA    as
         select * from my.Pricing_Conditions
         where
                 upper(approver) =      upper($user)
@@ -124,7 +90,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
                 modifiedAt desc;
 
     @readonly
-    entity PricingNoti_LU         as
+    entity PricingNoti_LU    as
         select * from my.Pricing_Conditions
         where
                 upper(ld_initiator) =      upper($user)
@@ -134,7 +100,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
             modifiedAt desc;
 
     @readonly
-    entity PricingNoti_LA         as
+    entity PricingNoti_LA    as
         select * from my.Pricing_Conditions
         where
                 upper(localApprover) =      upper($user)
@@ -144,13 +110,15 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
                 modifiedAt desc;
 
     @readonly
-    entity PricingNoti_CS         as
+    entity PricingNoti_CS    as
         select * from my.Pricing_Conditions
         where
-                upper(approver)  =      upper($user)
-            or  upper(createdBy) =      upper($user)
-            and ld_initiator     is     null
-            and status.code      not in (
+            (
+                   upper(approver)  = upper($user)
+                or upper(createdBy) = upper($user)
+            )
+            and ld_initiator is     null
+            and status.code  not in (
                 'Forwarded', 'Deleted', 'In Progress')
             order by
                 modifiedAt desc;

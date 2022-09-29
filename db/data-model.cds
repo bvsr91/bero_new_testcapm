@@ -37,7 +37,6 @@ entity Vendor_List : managed {
         localManufacturerCodeDesc : String(35);
         approver                  : String(10);
         completionDate            : Timestamp;
-        // status                    : String(10);
         status                    : Association to statusList;
 }
 
@@ -56,13 +55,9 @@ entity Pricing_Conditions : managed {
         local_completionDate   : Timestamp;
         ld_initiator           : String(10);
         localApprover          : String(10);
-        // local_ownership      : Boolean;
         lo_exchangeRate        : Boolean;
         lo_countryFactor       : Boolean;
         status                 : Association to statusList;
-        @UI.Hidden       :                               true
-        @UI.HiddenFilter :                               true
-        p_notif                : Composition of Pricing_Notifications;
 }
 
 entity statusList : CodeList {
@@ -94,26 +89,12 @@ entity Vendor_Comments : managed {
         Comment               : String;
         localManufacturerCode : String(10);
         Vendor_List           : Association to Vendor_List;
-// vendor_Notif          : Association to Vendor_Notifications;
 }
 
 entity Pricing_Comments : managed {
     key uuid               : UUID;
         Comment            : String;
         Pricing_Conditions : Association to Pricing_Conditions;
-        pricing_Notif      : Association to Pricing_Notifications;
-}
-
-entity Pricing_Notifications : managed {
-    key uuid                 : UUID;
-        manufacturerCodeDesc : String(35);
-        approvedDate         : Timestamp;
-        approver             : String;
-        user                 : String;
-        status               : Association to statusList;
-        completionDate       : Timestamp;
-        local_completionDate : Timestamp;
-        Pricing_Conditions   : Association to Pricing_Conditions;
 }
 
 

@@ -54,28 +54,7 @@ annotate schem.User_Approve_Maintain {
     managerid @title : '{i18n>managerid}';
 }
 
-
-annotate schema.Pricing_Notifications {
-    Pricing_Conditions_manufacturerCode @title           : '{i18n>Pricing_Conditions_manufacturerCode}'  @UI.HiddenFilter : true;
-    Pricing_Conditions_countryCode_code @title           : '{i18n>countryCode_code}'  @UI.HiddenFilter                    : true  @Common.Text : Pricing_Conditions_countryCode_code.desc;
-    manufacturerCodeDesc                @title           : '{i18n>manufacturerCodeDesc}';
-    createdAt                           @title           : '{i18n>createdAt}'  @UI.HiddenFilter                           : true;
-    createdBy                           @title           : '{i18n>createdBy}'  @UI.HiddenFilter                           : true;
-    completionDate                      @title           : '{i18n>completionDateCentral}'  @UI.HiddenFilter               : true;
-    local_completionDate                @title           : '{i18n>local_completionDate}'  @UI.HiddenFilter                : true;
-    status                              @title           : '{i18n>status}'  @UI.HiddenFilter                              : true;
-    approver                            @title           : '{i18n>approver}'  @UI.HiddenFilter                            : true;
-    user                                @title           : '{i18n>user}';
-    approvedDate                        @title           : '{i18n>approvedDate}'  @UI.HiddenFilter                        : true;
-    uuid                                @UI.HiddenFilter : true;
-}
-
 annotate schema.countriesCodeList {
     code @title : '{i18n>countryCode}';
     desc @title : '{i18n>desc}';
 }
-
-
-// annotate schema.vendorComments {
-//     id @UI.Hidden : true;
-// }
