@@ -54,7 +54,6 @@ entity Pricing_Conditions : managed {
         countryFactor          : Decimal(5, 3);
         validityStart          : Date;
         validityEnd            : Date;
-        initiator              : String(10);
         approver               : String(10);
         central_completionDate : Timestamp;
         local_completionDate   : Timestamp;

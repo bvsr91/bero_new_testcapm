@@ -75,7 +75,6 @@ module.exports = async function () {
                 }
                 // req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
                 req.data.status_code = status;
-                // req.data.initiator = req.user.id.toUpperCase();
                 req.data.uuid = cds.utils.uuid();
 
                 if (req.data.p_notif) {
@@ -1017,6 +1016,117 @@ module.exports = async function () {
         } catch (err) {
             req.reject(400, err);
         }
+    });
+
+    this.on("approvePricing", async (req, next) => {
+        var PricingNotifications = await next();
+        try {
+            var oReq = req.data;
+            var sUser = req.user.id.toUpperCase();
+            var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
+            var sReturnMsg = "Manufacturer Code: " + oReq.manufacturerCode + " and Country Code: " + oReq.countryCode;
+            oPricingCond = await SELECT.one(Pricing_Conditions).where(
+                {
+                    manufacturerCode: oReq.manufacturerCode,
+                    countryCode_code: oReq.countryCode,
+                    uuid: oReq.uuid
+                }
+            );
+            if (oPricingCond === null) {
+                req.reject(400, "Record is not available in the Pricing Conditions table for the given Manufacturer Code : " + oReq.manufacturerCode
+                    + " and  Country Code : " + oReq.countryCode);
+            }
+
+            if (oPricingCond.status_code !== "Pending") {
+                req.reject(400, "You can not approve the request which is in the " + oPricingCond.status_code + " Status");
+            }
+
+            if ((oPricingCond.lo_countryFactor === true || oPricingCond.lo_exchangeRate === true) && oPricingCond.ld_initiator === null) {
+                status = "Forwarded";
+                var aUsers = await SELECT.from(UserDetails).where({ country: oPricingCond.countryCode_code, role_role: ['LDT', 'SLP'] });
+                var aMails = [];
+                if (aUsers.length > 0) {
+                    for (var a of aUsers) {
+                        aMails.push(a.mail_id);
+                    }
+
+                    if ((oPricingCond.ld_initiator === null || oPricingCond.ld_initiator === "") && oPricingCond.approver === sUser) {
+                        await UPDATE(Pricing_Conditions).with({
+                            status_code: status,
+                            central_completionDate: new Date().toISOString(),
+                            modifiedBy: sUser
+                        }).where(
+                            {
+                                manufacturerCode: oReq.manufacturerCode,
+                                countryCode_code: oReq.countryCode,
+                                uuid: oReq.uuid
+                            }
+                        );
+                        createNoti.mainPayload({
+                            requestType: "New",
+                            requestDetail: "Manufacturer- " + oPricingCond.manufacturerCode + " & Country- " + oPricingCond.countryCode_code,
+                            from_user: sUser,
+                            recipients: aMails,
+                            priority: "High"
+                        });
+                        return sReturnMsg;
+                    } else {
+                        req.reject(400, "You can not approve the request which is assigned to " + oPricingCond.approver);
+                    }
+                } else {
+                    req.reject(400, "No Local Delivery teams available for the country: " + oPricingCond.countryCode_code);
+                }
+            } else {
+                var mailId, managerid, sCurrentInitiator;
+                if (oPricingCond.ld_initiator !== null && oPricingCond.localApprover === sUser) {
+                    await UPDATE(Pricing_Conditions).with({
+                        status_code: "Approved",
+                        local_completionDate: new Date().toISOString(),
+                        modifiedBy: sUser
+                    }).where(
+                        {
+                            manufacturerCode: oPricingCond.manufacturerCode,
+                            countryCode_code: oPricingCond.countryCode_code,
+                            uuid: oPricingCond.uuid
+                        }
+                    );
+                    sCurrentInitiator = oPricingCond.ld_initiator;
+                } else if (oPricingCond.ld_initiator === null && oPricingCond.approver === sUser) {
+                    await UPDATE(Pricing_Conditions).with({
+                        status_code: "Approved",
+                        central_completionDate: new Date().toISOString(),
+                        modifiedBy: sUser
+                    }).where(
+                        {
+                            manufacturerCode: oPricingCond.manufacturerCode,
+                            countryCode_code: oPricingCond.countryCode_code,
+                            uuid: oPricingCond.uuid
+                        }
+                    );
+                    sCurrentInitiator = oPricingCond.createdBy;
+                }
+                if (sCurrentInitiator) {
+                    oResult = await SELECT.one(UserDetails).where({ userid: sCurrentInitiator });
+                    if (oResult) {
+                        mailId = oResult.mail_id;
+                    }
+                    createNoti.mainPayload({
+                        requestType: "Approved",
+                        requestDetail: "Manufacturer- " + oPricingCond.manufacturerCode + " & Country- " + oPricingCond.countryCode_code,
+                        from_user: sUser,
+                        recipients: [mailId],
+                        priority: "Low"
+                    });
+                    return sReturnMsg;
+                } else {
+                    var sFinalApprover = oPricingCond.localApprover ? oPricingCond.localApprover : oPricingCond.approver;
+                    req.reject(400, "You can not approve the request which is assigned to " + sFinalApprover);
+                }
+            }
+        } catch (err) {
+            req.reject(400, err);
+        }
+
     });
 
     async function validatePricing(oReq) {

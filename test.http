@@ -1,8 +1,8 @@
-POST http://localhost:4004/v2/MroSrv/approveVendor
+POST http://localhost:4004/v2/MroSrv/approvePricing
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-   "uuid":"2121",
-   "manufacturerCode":"8777",
-   "countryCode":"IN"
+   "uuid":"00948461-efeb-4482-a492-2a385785b136",
+   "manufacturerCode":"ED14",
+   "countryCode":"IT"
 }

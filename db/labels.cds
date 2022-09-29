@@ -28,7 +28,6 @@ annotate schema.Pricing_Conditions {
     countryFactor          @title           : '{i18n>countryFactor}';
     validityStart          @title           : '{i18n>validityStart}';
     validityEnd            @title           : '{i18n>validityEnd}';
-    initiator              @title           : '{i18n>initiator}';
     ld_initiator           @title           : '{i18n>ld_initiator}';
     approver               @title           : '{i18n>approver}'  @UI.HiddenFilter      : true;
     central_completionDate @title           : '{i18n>central_completionDate}';

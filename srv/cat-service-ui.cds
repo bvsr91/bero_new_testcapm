@@ -136,12 +136,6 @@ annotate MroService.PricingConditions with @(UI : {
             ![@HTML5.CssDefaults] : {width : '7rem'},
             ![@UI.Importance]     : #Medium
         },
-        // {
-        //     $Type                 : 'UI.DataField',
-        //     Value                 : local_ownership,
-        //     ![@HTML5.CssDefaults] : {width : '8rem'},
-        //     ![@UI.Importance]     : #High
-        // },
         {
             $Type                 : 'UI.DataField',
             Value                 : status_code,
@@ -149,11 +143,6 @@ annotate MroService.PricingConditions with @(UI : {
             Criticality           : status.criticality,
             ![@UI.Importance]     : #High
         },
-        // {
-        //     $Type             : 'UI.DataField',
-        //     Value             : countryDesc,
-        //     ![@UI.Importance] : #Low
-        // },
         {
             $Type                 : 'UI.DataField',
             Value                 : validityStart,
@@ -172,12 +161,6 @@ annotate MroService.PricingConditions with @(UI : {
             ![@HTML5.CssDefaults] : {width : '8rem'},
             ![@UI.Importance]     : #Medium
         },
-        // {
-        //     $Type                 : 'UI.DataField',
-        //     Value                 : initiator,
-        //     ![@HTML5.CssDefaults] : {width : '8rem'},
-        //     ![@UI.Importance]     : #Medium
-        // },
         {
             $Type                 : 'UI.DataField',
             Value                 : ld_initiator,
@@ -211,6 +194,16 @@ annotate MroService.PricingConditions with @(UI : {
             Value                 : modifiedBy,
             ![@HTML5.CssDefaults] : {width : '8rem'},
             ![@UI.Importance]     : #Low
+        },
+        {
+            $Type             : 'UI.DataField',
+            Value             : central_completionDate,
+            ![@UI.Importance] : #Medium
+        },
+        {
+            $Type             : 'UI.DataField',
+            Value             : local_completionDate,
+            ![@UI.Importance] : #Medium
         }
     ],
     SelectionFields : [
@@ -219,7 +212,6 @@ annotate MroService.PricingConditions with @(UI : {
         status_code
     ],
     HiddenFilter    : [
-        initiator,
         approver,
         localCurrency_name,
         localCurrency_descr
