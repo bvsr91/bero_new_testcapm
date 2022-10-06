@@ -28,9 +28,9 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
 
     entity VendorComments    as projection on my.Vendor_Comments;
     entity PricingComments   as projection on my.Pricing_Comments;
-    action approvePricing(uuid : String, manufacturerCode : String, countryCode : String)                returns String;
-    action acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String)        returns String;
-    action approveVendor(uuid : String, manufacturerCode : String, countryCode : String)                 returns String;
+    action approvePricing(uuid : String, manufacturerCode : String, countryCode : String)                                  returns String;
+    action acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String)                          returns String;
+    action approveVendor(uuid : String, manufacturerCode : String, countryCode : String)                                   returns String;
 
     type oVendList : many {
         manufacturerCode      : String(10);
@@ -38,8 +38,8 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
         countryCode           : String(10);
     };
 
-    action reopenVendor(uuid : String, manufacturerCode : String, countryCode : String, status : String) returns String;
-    action reopenPricing(uuid : String, status : String)                                                 returns String;
+    action reopenVendor(uuid : String, manufacturerCode : String, countryCode : String, status : String, comment : String) returns String;
+    action reopenPricing(uuid : String, status : String, comment : String)                                                 returns String;
 
     @readonly
     entity CheckUserRole     as projection on my.Users_Role_Assign;
@@ -60,10 +60,11 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     entity VendorNoti_A      as
         select * from my.Vendor_List
         where
-                upper(approver) =  upper($user)
-            and status.code     != 'Deleted'
-        order by
-            modifiedAt desc;
+                upper(approver) =      upper($user)
+            and status.code     not in (
+                'Deleted', 'In Progress')
+            order by
+                modifiedAt desc;
 
     @readonly
     entity PricingNoti_CU    as
@@ -139,8 +140,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     view Status_Vendor as
         select * from my.statusList
         where
-            code not in (
-                'Forwarded', 'In Progress');
+            code not in ('Forwarded');
 }
 
 // @requires : 'authenticated-user'

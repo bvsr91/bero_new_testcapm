@@ -46,8 +46,8 @@ entity Pricing_Conditions : managed {
     key uuid                   : UUID @UI.HiddenFilter : true;
         manufacturerCodeDesc   : String(35);
         localCurrency          : Currency;
-        exchangeRate           : Decimal(5, 3);
-        countryFactor          : Decimal(5, 3);
+        exchangeRate           : Decimal(10, 5);
+        countryFactor          : Decimal(10, 5);
         validityStart          : Date;
         validityEnd            : Date;
         approver               : String(10);

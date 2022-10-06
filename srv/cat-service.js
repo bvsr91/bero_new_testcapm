@@ -334,6 +334,13 @@ module.exports = async function () {
         try {
             var sUser = req.user.id.toUpperCase();
             var oReq = req.data;
+            if (!oReq.comment) {
+                req.reject(400, "Please enter the comment");
+            }
+            if (oReq.comment && oReq.comment === "") {
+                req.reject(400, "Please enter the comment");
+            }
+
             var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
             if (oUser && (oUser.role_role === "GCM" || oUser.role_role === "SGC")) {
                 var oVend = await SELECT.one(Vendor_List).where({
@@ -345,6 +352,7 @@ module.exports = async function () {
                 if (oVend && oVend.approver === sUser) {
                     var result = await UPDATE(Vendor_List).with({
                         status_code: oReq.status,
+                        completionDate: null,
                         modifiedBy: req.user.id.toUpperCase()
                     }).where(
                         {
@@ -353,6 +361,14 @@ module.exports = async function () {
                             uuid: oVend.uuid
                         }
                     );
+                    var oVendComment = {
+                        Comment: oReq.comment,
+                        localManufacturerCode: oVend.localManufacturerCode,
+                        Vendor_List_manufacturerCode: oVend.manufacturerCode,
+                        Vendor_List_countryCode_code: oVend.countryCode_code,
+                        Vendor_List_uuid: oVend.uuid
+                    };
+                    await INSERT.into(Vendor_Comments).entries(oVendComment);
                     var oMail = await SELECT.one(UserDetails).where({ userid: oVend.createdBy });
                     if (oMail && oMail.mail_id !== "") {
                         vendorNoti.mainPayload({
@@ -619,7 +635,14 @@ module.exports = async function () {
         try {
             var sStatus = req.data.status,
                 sForwardUser = "",
-                oReq = req.data;
+                oReq = req.data,
+                bCentral = false;
+            if (!oReq.comment) {
+                req.reject(400, "Please enter the comment");
+            }
+            if (oReq.comment && oReq.comment === "") {
+                req.reject(400, "Please enter the comment");
+            }
             var sUser = req.user.id.toUpperCase();
             var oUser = await SELECT.one(UserDetails).where({ userid: sUser });
             if (oUser && (oUser.role_role === "GCM" || oUser.role_role === "SGC" || oUser.role_role === "LP" || oUser.role_role === "SLP")) {
@@ -639,19 +662,45 @@ module.exports = async function () {
                             sForwardUser = oPricing.ld_initiator;
                         } else if (oPricing.localApprover === null && oPricing.approver === sUser) {
                             sForwardUser = oPricing.createdBy;
+                            bCentral = true;
                         } else {
                             req.reject(400, "You are not authorized to reopen the request");
                         }
-                        var result = await UPDATE(Pricing_Conditions).with({
-                            status_code: sStatus,
-                            modifiedBy: req.user.id.toUpperCase()
-                        }).where(
-                            {
-                                manufacturerCode: oPricing.manufacturerCode,
-                                countryCode_code: oPricing.countryCode_code,
-                                uuid: oPricing.uuid
-                            }
-                        );
+                        if (bCentral) {
+                            var result = await UPDATE(Pricing_Conditions).with({
+                                status_code: sStatus,
+                                central_completionDate: null,
+                                local_completionDate: null,
+                                ld_initiator: null,
+                                localApprover: null,
+                                modifiedBy: req.user.id.toUpperCase()
+                            }).where(
+                                {
+                                    manufacturerCode: oPricing.manufacturerCode,
+                                    countryCode_code: oPricing.countryCode_code,
+                                    uuid: oPricing.uuid
+                                }
+                            );
+                        } else {
+                            result = await UPDATE(Pricing_Conditions).with({
+                                status_code: sStatus,
+                                local_completionDate: null,
+                                modifiedBy: req.user.id.toUpperCase()
+                            }).where(
+                                {
+                                    manufacturerCode: oPricing.manufacturerCode,
+                                    countryCode_code: oPricing.countryCode_code,
+                                    uuid: oPricing.uuid
+                                }
+                            );
+                        }
+                        var oPricingComment = {
+                            Comment: oReq.comment,
+                            Pricing_Conditions_manufacturerCode: oPricing.manufacturerCode,
+                            Pricing_Conditions_countryCode_code: oPricing.countryCode_code,
+                            Pricing_Conditions_uuid: oPricing.uuid
+                        };
+                        await INSERT.into(Pricing_Comments).entries(oPricingComment);
                         var oMail = await SELECT.one(UserDetails).where({ userid: sForwardUser.toUpperCase() });
                         if (oMail && oMail.mail_id !== "") {
                             createNoti.mainPayload({
