@@ -411,8 +411,11 @@ module.exports = async function () {
             if (oPricing.status_code === "Approved") {
                 req.reject(400, "You can not modify/update the approved record");
             }
+
             if (oPricing.ld_initiator !== null && (oUser.role_role === "CDT" || oUser.role_role === "SGC")) {
-                req.reject(400, "You can not modify/update this record, the record is in local team scope");
+                if (!(oPricing.status_code === "Rejected" && req.data.status_code === "Deleted" && oPricing.createdBy === sUser)) {
+                    req.reject(400, "You can not modify/update this record, the record is in local team scope");
+                }
             }
             if (oPricing.status_code === "Forwarded" && oPricing.ld_initiator === null && (oPricing.lo_exchangeRate === true && oPricing.lo_countryFactor === true)) {
                 var aAllowRoles = ["CDT", "SGC"];
@@ -657,15 +660,28 @@ module.exports = async function () {
                         status_code: "Approved"
                     });
                     if (oPricing) {
-                        if (oPricing.localApprover !== null && oPricing.localApprover === sUser && (oUser.role_role === "LP" || oUser.role_role === "SLP")) {
+                        if (oPricing.createdBy === sUser && ["GCM", "SGC"].includes(oUser.role_role) &&
+                            (oPricing.lo_countryFactor === true || oPricing.lo_exchangeRate === true)) {
+                            bCentral = true;
+                            sForwardUser = oPricing.createdBy;
+                        } else if (oPricing.createdBy === sUser && ["GCM", "SGC"].includes(oUser.role_role) && localApprover === null) {
+                            bCentral = true;
+                            sForwardUser = oPricing.createdBy;
+                        } else if (oPricing.localApprover !== null && oPricing.localApprover === sUser && (oUser.role_role === "LP" || oUser.role_role === "SLP")) {
                             sStatus = sStatus === "Pending" ? "In Progress" : sStatus;
                             sForwardUser = oPricing.ld_initiator;
-                        } else if (oPricing.localApprover === null && oPricing.approver === sUser) {
-                            sForwardUser = oPricing.createdBy;
-                            bCentral = true;
                         } else {
                             req.reject(400, "You are not authorized to reopen the request");
                         }
+                        // if (oPricing.localApprover !== null && oPricing.localApprover === sUser && (oUser.role_role === "LP" || oUser.role_role === "SLP")) {
+                        //     sStatus = sStatus === "Pending" ? "In Progress" : sStatus;
+                        //     sForwardUser = oPricing.ld_initiator;
+                        // } else if (oPricing.localApprover === null && oPricing.approver === sUser) {
+                        //     sForwardUser = oPricing.createdBy;
+                        //     bCentral = true;
+                        // } else {
+                        //     req.reject(400, "You are not authorized to reopen the request");
+                        // }
                         if (bCentral) {
                             var result = await UPDATE(Pricing_Conditions).with({
                                 status_code: sStatus,
@@ -673,7 +689,7 @@ module.exports = async function () {
                                 local_completionDate: null,
                                 ld_initiator: null,
                                 localApprover: null,
-                                modifiedBy: req.user.id.toUpperCase()
+                                modifiedBy: sUser
                             }).where(
                                 {
                                     manufacturerCode: oPricing.manufacturerCode,
@@ -685,7 +701,7 @@ module.exports = async function () {
                             result = await UPDATE(Pricing_Conditions).with({
                                 status_code: sStatus,
                                 local_completionDate: null,
-                                modifiedBy: req.user.id.toUpperCase()
+                                modifiedBy: sUser
                             }).where(
                                 {
                                     manufacturerCode: oPricing.manufacturerCode,

@@ -26,8 +26,12 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     entity CountriesCodeList as projection on my.countriesCodeList;
     // entity VendorComments    as projection on my.vendorComments
 
-    entity VendorComments    as projection on my.Vendor_Comments;
-    entity PricingComments   as projection on my.Pricing_Comments;
+    entity VendorComments    as projection on my.Vendor_Comments order by
+        modifiedAt desc;
+
+    entity PricingComments   as projection on my.Pricing_Comments order by
+        modifiedAt desc;
+
     action approvePricing(uuid : String, manufacturerCode : String, countryCode : String)                                  returns String;
     action acceptPricingCond(uuid : String, manufacturerCode : String, countryCode_code : String)                          returns String;
     action approveVendor(uuid : String, manufacturerCode : String, countryCode : String)                                   returns String;
@@ -67,6 +71,22 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
                 modifiedAt desc;
 
     @readonly
+    entity VendorNoti_SA     as
+        select * from my.Vendor_List
+        where
+            (
+                    upper(approver) =      upper($user)
+                and status.code     not in (
+                    'Deleted', 'In Progress')
+                )
+                or (
+                        upper(createdBy) = upper($user)
+                    and status.code      = 'In Progress'
+                )
+            order by
+                modifiedAt desc;
+
+    @readonly
     entity PricingNoti_CU    as
         select * from my.Pricing_Conditions
         where
@@ -81,12 +101,22 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     entity PricingNoti_CA    as
         select * from my.Pricing_Conditions
         where
-                upper(approver) =      upper($user)
-            and (
-                ld_initiator is null
-            )
-            and status.code     not in (
-                'Deleted', 'Forwarded', 'In Progress')
+            (
+                    upper(approver) =      upper($user)
+                and (
+                    ld_initiator is null
+                )
+                and status.code     not in (
+                    'Deleted', 'Forwarded', 'In Progress')
+                )
+                or (
+                        upper(approver) = upper($user)
+                    and status.code     = 'Approved'
+                    and (
+                           lo_countryFactor = true
+                        or lo_exchangeRate  = true
+                    )
+                )
             order by
                 modifiedAt desc;
 
@@ -115,12 +145,22 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
         select * from my.Pricing_Conditions
         where
             (
-                   upper(approver)  = upper($user)
-                or upper(createdBy) = upper($user)
-            )
-            and ld_initiator is     null
-            and status.code  not in (
-                'Forwarded', 'Deleted', 'In Progress')
+                (
+                       upper(approver)  = upper($user)
+                    or upper(createdBy) = upper($user)
+                )
+                and ld_initiator is     null
+                and status.code  not in (
+                    'Forwarded', 'Deleted', 'In Progress')
+                )
+                or (
+                        upper(approver) = upper($user)
+                    and status.code     = 'Approved'
+                    and (
+                           lo_countryFactor = true
+                        or lo_exchangeRate  = true
+                    )
+                )
             order by
                 modifiedAt desc;
 
@@ -129,13 +169,17 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
         select * from my.Pricing_Conditions
         where
             (
-                   upper(localApprover) = upper($user)
-                or upper(ld_initiator)  = upper($user)
-            )
-            and status.code not in ('Deleted')
-            or  status.code =      'Forwarded'
-        order by
-            modifiedAt desc;
+                    upper(localApprover) =      upper($user)
+                and status.code          not in (
+                    'Deleted', 'In Progress')
+                )
+                or (
+                        upper(ld_initiator) = upper($user)
+                    and status.code         = 'In Progress'
+                )
+                or status.code = 'Forwarded'
+            order by
+                modifiedAt desc;
 
     view Status_Vendor as
         select * from my.statusList
@@ -143,7 +187,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
             code not in ('Forwarded');
 }
 
-// @requires : 'authenticated-user'
+@requires : 'authenticated-user'
 // @(restrict : [{
 //     grant : ['READ'],
 //     to    : 'mrobeReadOnly_sc'

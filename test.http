@@ -1,8 +1,8 @@
-POST http://localhost:4004/v2/MroSrv/approvePricing
+POST http://localhost:4004/v2/MroSrv/reopenPricing
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-    "uuid": "a0f9bcca-3f7d-48bd-8b04-02b71bd80175",
-"manufacturerCode": "DE3",
-"countryCode": "IT"
+"uuid":"dab1a1f3-8fec-473e-b928-3c3427c9f220",
+"status":"Pending",
+"comment":"Test"
 }
