@@ -2,7 +2,7 @@ POST http://localhost:4004/v2/MroSrv/reopenPricing
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-"uuid":"dab1a1f3-8fec-473e-b928-3c3427c9f220",
+"uuid":"ab99a824-1e62-4da8-98e2-cd7d621a72b8",
 "status":"Pending",
 "comment":"Test"
 }

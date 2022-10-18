@@ -187,7 +187,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
             code not in ('Forwarded');
 }
 
-@requires : 'authenticated-user'
+// @requires : 'authenticated-user'
 // @(restrict : [{
 //     grant : ['READ'],
 //     to    : 'mrobeReadOnly_sc'

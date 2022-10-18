@@ -660,11 +660,11 @@ module.exports = async function () {
                         status_code: "Approved"
                     });
                     if (oPricing) {
-                        if (oPricing.createdBy === sUser && ["GCM", "SGC"].includes(oUser.role_role) &&
+                        if (oPricing.approver === sUser && ["GCM", "SGC"].includes(oUser.role_role) &&
                             (oPricing.lo_countryFactor === true || oPricing.lo_exchangeRate === true)) {
                             bCentral = true;
                             sForwardUser = oPricing.createdBy;
-                        } else if (oPricing.createdBy === sUser && ["GCM", "SGC"].includes(oUser.role_role) && localApprover === null) {
+                        } else if (oPricing.approver === sUser && ["GCM", "SGC"].includes(oUser.role_role) && oPricing.localApprover === null) {
                             bCentral = true;
                             sForwardUser = oPricing.createdBy;
                         } else if (oPricing.localApprover !== null && oPricing.localApprover === sUser && (oUser.role_role === "LP" || oUser.role_role === "SLP")) {
