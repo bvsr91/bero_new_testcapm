@@ -12,6 +12,7 @@ service MroService @(impl : './cat-service.js') @(path : '/MroSrv') {
     entity Users             as projection on my.Users_Role_Assign;
     entity MaintainApproval  as projection on my.User_Approve_Maintain;
 
+
     @cds.redirection.target
     entity VendorList        as projection on my.Vendor_List order by
         modifiedAt desc;
