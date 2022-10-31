@@ -15,15 +15,15 @@ entity Roles {
 }
 
 entity Users_Role_Assign {
-    key userid  : String(30);
+    key userid  : String;
         role    : Association to Roles;
         mail_id : String;
         country : String(3); //mandatory for LDT and LP
 }
 
 entity User_Approve_Maintain {
-    key userid    : String(30);
-    key managerid : String(30);
+    key userid    : String;
+    key managerid : String;
 }
 
 entity Vendor_List : managed {
@@ -35,7 +35,7 @@ entity Vendor_List : managed {
         localManufacturerCode     : String(10);
         manufacturerCodeDesc      : String(35);
         localManufacturerCodeDesc : String(35);
-        approver                  : String(10);
+        approver                  : String;
         completionDate            : Timestamp;
         status                    : Association to statusList;
 }
@@ -50,11 +50,11 @@ entity Pricing_Conditions : managed {
         countryFactor          : Decimal(10, 5);
         validityStart          : Date;
         validityEnd            : Date;
-        approver               : String(10);
+        approver               : String;
         central_completionDate : Timestamp;
         local_completionDate   : Timestamp;
-        ld_initiator           : String(10);
-        localApprover          : String(10);
+        ld_initiator           : String;
+        localApprover          : String;
         lo_exchangeRate        : Boolean;
         lo_countryFactor       : Boolean;
         status                 : Association to statusList;

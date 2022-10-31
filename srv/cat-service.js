@@ -1,6 +1,27 @@
 const cds = require('@sap/cds');
 const createNoti = require('./createNotification');
 const vendorNoti = require('./createVendorNotification');
+const destinationName = "bpmworkflowruntime";
+const SapCfAxios = require('sap-cf-axios').default;
+const express = require('express');
+const passport = require('passport');
+const xsenv = require('@sap/xsenv');
+const JWTStrategy = require('@sap/xssec').JWTStrategy;
+const services = xsenv.getServices({ uaa: 'mrobe-xsuaa-service' });
+const axios = SapCfAxios(destinationName);
+// app.use(express.json());
+passport.use(new JWTStrategy(services.uaa));
+// app.use(passport.initialize());
+// app.use(passport.authenticate('JWT', { session: false }));
+const baseURL = "https://9ab6b739trial.authentication.us10.hana.ondemand.com";
+const clientId = "sb-clone-ef7512b9-229f-4264-9eb3-c15701576ef8!b87910|workflow!b1774";
+const clientSecret = "c4cf0c76-f898-4491-b57a-8c6a9bda8203$A5IcpzZ-xbCEjmI1vuA3V8ajs78nO9eWgZmovY78SW0=";
+
+// const axios = require('axios')
+const oauth = require('axios-oauth-client')
+
+
+
 // const types = require('./types');
 module.exports = async function () {
     const db = await cds.connect.to('db')
@@ -105,6 +126,56 @@ module.exports = async function () {
                 req.data.uuid = cds.utils.uuid();
                 req.data.createdBy = req.user.id.toUpperCase();
                 req.data.modifiedBy = req.user.id.toUpperCase();
+
+                var startContext = { employee: "Srinivas Reddy", itequipment: "Mouse" };
+                var workflowStartPayload = { definitionId: "com.act.myworkflow", context: startContext }
+                const restApi = await cds.connect.to("bpmworkflowruntime"); //should match the connection name in step 1
+                const test = restApi.tx(req).post("/v1/workflow-instances", workflowStartPayload);
+                // const instanceId = "a61ad7ad-50ab-11ed-a34a-eeee0a8aecda";
+                // const test = restApi.tx(req).get("/v1/workflow-instances/" + instanceId + "/context");
+                // console.log(test);
+                // createWFInstance();
+                // const res = await axios.request({
+                //     url: "/v1/workflow-instances",
+                //     method: "POST",
+                //     baseURL: baseURL,
+                //     data: workflowStartPayload
+                // });
+
+                // const response1 = await axios({
+                //     method: "GET",
+                //     url: "/v1/workflow-instances",
+                //     headers: {
+                //         "X-CSRF-Token": "FETCH"
+                //     },
+                //     auth: {
+                //         username: clientId,
+                //         password: clientSecret
+                //     },
+                //     params: {
+                //         "grant_type": "client_credentials"                        
+                //     }
+                // });
+                // // return response.data.d.results;
+
+                // const response = await axios({
+                //     method: "POST",
+                //     url: "/v1/workflow-instances",
+                //     data: workflowStartPayload,
+                //     baseURL: baseURL,
+                //     headers: {
+                //         'cookie': response1.headers['set-cookie'][0].split(";")[0] + ";" + response1.headers['set-cookie'][1].split(";")[0],
+                //         'x-csrf-token': response1.headers['x-csrf-token']
+                //     },
+                //     auth: {
+                //         username: clientId,
+                //         password: clientSecret
+                //     },
+                //     params: {
+                //         "grant_type": "client_credentials"                        
+                //     }
+
+                // });
 
                 return req;
             } else {
@@ -952,3 +1023,42 @@ module.exports = async function () {
     }
 
 }
+
+
+let getAccessToken = () => {
+    //Get the Oauth2 access token and store it as defaults of the axios client
+    return new Promise(function (resolve, reject) {
+        axios.request({
+            url: "/oauth/token",
+            method: "POST",
+            baseURL: baseURL,
+            auth: {
+                username: clientId,
+                password: clientSecret
+            },
+            params: {
+                "grant_type": "client_credentials",
+                // "scope": ""
+            }
+        }).then((res) => {
+            console.log("Oauth Token retrieved Succesfully!");
+            axios.defaults.headers.common['Authorization'] = "Bearer " + res.data.access_token;
+            resolve(res.data.access_token)
+        }).catch((error) => {
+            console.error(error)
+        });
+    })
+}
+
+function handleResponseError(err) {
+    console.error(err);
+
+    if (err.response.status == 401) {
+        //Token Expired
+        console.log("Getting new token")
+        getAccessToken()
+    }
+}
+
+//First request to have the Oauth token saved
+// getAccessToken();
