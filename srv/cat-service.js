@@ -8,14 +8,16 @@ const passport = require('passport');
 const xsenv = require('@sap/xsenv');
 const JWTStrategy = require('@sap/xssec').JWTStrategy;
 const services = xsenv.getServices({ uaa: 'mrobe-xsuaa-service' });
-const axios = SapCfAxios(destinationName);
+// const axios = SapCfAxios(destinationName);
+const axios = require("axios");
 // app.use(express.json());
 passport.use(new JWTStrategy(services.uaa));
 // app.use(passport.initialize());
 // app.use(passport.authenticate('JWT', { session: false }));
-const baseURL = "https://9ab6b739trial.authentication.us10.hana.ondemand.com";
-const clientId = "sb-clone-ef7512b9-229f-4264-9eb3-c15701576ef8!b87910|workflow!b1774";
-const clientSecret = "c4cf0c76-f898-4491-b57a-8c6a9bda8203$A5IcpzZ-xbCEjmI1vuA3V8ajs78nO9eWgZmovY78SW0=";
+const authUrl = "https://9ab6b739trial.authentication.us10.hana.ondemand.com";
+const restUrl = "https://api.workflow-sap.cfapps.us10.hana.ondemand.com/workflow-service/rest";
+const clientId = "sb-clone-935161a5-58a8-439e-b333-d3fe8272ba4d!b87910|workflow!b1774";
+const clientSecret = "e5ddd9db-2098-43c6-9a2d-ba9a35f68894$vdjZyjK-qfaJ72vV_pe8Z9S8YYOHhK9Nz_iJEa0uZp0=";
 
 // const axios = require('axios')
 const oauth = require('axios-oauth-client')
@@ -95,6 +97,7 @@ module.exports = async function () {
                 // req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
                 req.data.status_code = status;
                 req.data.uuid = cds.utils.uuid();
+                StartInstance(req.data);
                 return req;
             } else {
                 req.error(400, "Please assign manager to the user " + req.user.id.toUpperCase());
@@ -1031,7 +1034,7 @@ let getAccessToken = () => {
         axios.request({
             url: "/oauth/token",
             method: "POST",
-            baseURL: baseURL,
+            baseURL: authUrl,
             auth: {
                 username: clientId,
                 password: clientSecret
@@ -1050,6 +1053,29 @@ let getAccessToken = () => {
     })
 }
 
+let StartInstance = function (context) {
+    //Starts the Workflow Instance. The beggining of the process
+    return new Promise(function (resolve, reject) {
+        var data = {
+            definitionId: "com.act.srinitestcustomui",
+            context: context
+        };
+        data.context.data = context;
+        axios.request({
+            url: "/v1/workflow-instances",
+            method: "POST",
+            baseURL: restUrl,
+            data: data
+        }).then((res) => {
+            // console.log("Instance "+res.data.id+ " Created Successfully")
+            resolve(res.data)
+        }).catch((err) => {
+            handleResponseError(err)
+            reject(err)
+        });
+    })
+}
+
 function handleResponseError(err) {
     console.error(err);
 
@@ -1061,4 +1087,4 @@ function handleResponseError(err) {
 }
 
 //First request to have the Oauth token saved
-// getAccessToken();
+getAccessToken();
