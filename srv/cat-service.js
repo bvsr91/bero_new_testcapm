@@ -96,8 +96,7 @@ module.exports = async function () {
                 }
                 // req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
                 req.data.status_code = status;
-                req.data.uuid = cds.utils.uuid();
-                StartInstance(req.data);
+                req.data.uuid = cds.utils.uuid();                
                 return req;
             } else {
                 req.error(400, "Please assign manager to the user " + req.user.id.toUpperCase());
@@ -129,57 +128,6 @@ module.exports = async function () {
                 req.data.uuid = cds.utils.uuid();
                 req.data.createdBy = req.user.id.toUpperCase();
                 req.data.modifiedBy = req.user.id.toUpperCase();
-
-                var startContext = { employee: "Srinivas Reddy", itequipment: "Mouse" };
-                var workflowStartPayload = { definitionId: "com.act.myworkflow", context: startContext }
-                const restApi = await cds.connect.to("bpmworkflowruntime"); //should match the connection name in step 1
-                const test = restApi.tx(req).post("/v1/workflow-instances", workflowStartPayload);
-                // const instanceId = "a61ad7ad-50ab-11ed-a34a-eeee0a8aecda";
-                // const test = restApi.tx(req).get("/v1/workflow-instances/" + instanceId + "/context");
-                // console.log(test);
-                // createWFInstance();
-                // const res = await axios.request({
-                //     url: "/v1/workflow-instances",
-                //     method: "POST",
-                //     baseURL: baseURL,
-                //     data: workflowStartPayload
-                // });
-
-                // const response1 = await axios({
-                //     method: "GET",
-                //     url: "/v1/workflow-instances",
-                //     headers: {
-                //         "X-CSRF-Token": "FETCH"
-                //     },
-                //     auth: {
-                //         username: clientId,
-                //         password: clientSecret
-                //     },
-                //     params: {
-                //         "grant_type": "client_credentials"                        
-                //     }
-                // });
-                // // return response.data.d.results;
-
-                // const response = await axios({
-                //     method: "POST",
-                //     url: "/v1/workflow-instances",
-                //     data: workflowStartPayload,
-                //     baseURL: baseURL,
-                //     headers: {
-                //         'cookie': response1.headers['set-cookie'][0].split(";")[0] + ";" + response1.headers['set-cookie'][1].split(";")[0],
-                //         'x-csrf-token': response1.headers['x-csrf-token']
-                //     },
-                //     auth: {
-                //         username: clientId,
-                //         password: clientSecret
-                //     },
-                //     params: {
-                //         "grant_type": "client_credentials"                        
-                //     }
-
-                // });
-
                 return req;
             } else {
                 req.error(400, "Manager not assigned", "Please assign manager to the user " + req.user.id.toUpperCase());
@@ -206,6 +154,7 @@ module.exports = async function () {
                 recipients: [mailId],
                 priority: "High"
             });
+            StartInstance(req);
         } catch (err) {
             return err;
         }
@@ -251,6 +200,7 @@ module.exports = async function () {
         } catch (error) {
             return error;
         }
+        StartInstance(req);
         return req;
     });
 
@@ -1056,16 +1006,20 @@ let getAccessToken = () => {
 let StartInstance = function (context) {
     //Starts the Workflow Instance. The beggining of the process
     return new Promise(function (resolve, reject) {
-        var data = {
+        var oData = {
             definitionId: "com.act.srinitestcustomui",
             context: context
         };
-        data.context.data = context;
+        var oQueryParam = {};
+        oQueryParam.manufacturerCode = context.manufacturerCode;
+        oQueryParam.countryCode_code = context.countryCode_code;
+        oQueryParam.uuid = context.uuid;
+        oData.context.data = oQueryParam;
         axios.request({
             url: "/v1/workflow-instances",
             method: "POST",
             baseURL: restUrl,
-            data: data
+            data: oData
         }).then((res) => {
             // console.log("Instance "+res.data.id+ " Created Successfully")
             resolve(res.data)

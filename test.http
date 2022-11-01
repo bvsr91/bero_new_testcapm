@@ -1,8 +1,7 @@
-POST http://localhost:4004/v2/MroSrv/reopenPricing
+POST http://localhost:4004/v2/MroSrv/VendorList
 Content-Type: application/json;IEEE754Compatible=true
 
 {
-"uuid":"ab99a824-1e62-4da8-98e2-cd7d621a72b8",
-"status":"Pending",
-"comment":"Test"
+"manufacturerCode":"4342",
+"countryCode_code":"IN"
 }
