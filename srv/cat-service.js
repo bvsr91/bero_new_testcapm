@@ -96,7 +96,7 @@ module.exports = async function () {
                 }
                 // req.data.approver = status === "Forwarded" ? "" : result[0].managerid;
                 req.data.status_code = status;
-                req.data.uuid = cds.utils.uuid();                
+                req.data.uuid = cds.utils.uuid();
                 return req;
             } else {
                 req.error(400, "Please assign manager to the user " + req.user.id.toUpperCase());
@@ -154,7 +154,12 @@ module.exports = async function () {
                 recipients: [mailId],
                 priority: "High"
             });
-            StartInstance(req);
+            var aCreatorUser = await SELECT.from(UserDetails).where({ userid: req.createdBy });
+            var sCreatorMailID;
+            if (aCreatorUser.length > 0) {
+                sCreatorMailID = aCreatorUser[0].mail_id;
+            }
+            StartInstance(req, "Vendor Request", mailId, sCreatorMailID);
         } catch (err) {
             return err;
         }
@@ -200,7 +205,12 @@ module.exports = async function () {
         } catch (error) {
             return error;
         }
-        StartInstance(req);
+        var aCreatorUser = await SELECT.from(UserDetails).where({ userid: req.createdBy });
+        var sCreatorMailID;
+        if (aCreatorUser.length > 0) {
+            sCreatorMailID = aCreatorUser[0].mail_id;
+        }
+        StartInstance(req, "Pricing Request", mailId, sCreatorMailID);
         return req;
     });
 
@@ -1003,17 +1013,21 @@ let getAccessToken = () => {
     })
 }
 
-let StartInstance = function (context) {
+let StartInstance = async function (context, sReqType, approverMailID, creatorMailID) {
     //Starts the Workflow Instance. The beggining of the process
     return new Promise(function (resolve, reject) {
         var oData = {
             definitionId: "com.act.srinitestcustomui",
             context: context
-        };
+        };      
+
         var oQueryParam = {};
         oQueryParam.manufacturerCode = context.manufacturerCode;
         oQueryParam.countryCode_code = context.countryCode_code;
         oQueryParam.uuid = context.uuid;
+        context.reqType = sReqType;
+        context.approverMailID = approverMailID;
+        context.creatorMailID = creatorMailID;
         oData.context.data = oQueryParam;
         axios.request({
             url: "/v1/workflow-instances",
